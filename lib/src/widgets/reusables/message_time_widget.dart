@@ -1,25 +1,42 @@
-part of '../../../chatview.dart';
+part of '../../../flutter_chatbook.dart';
 
-class WhatsappStyleMessageTimeWidget extends StatelessWidget {
-  const WhatsappStyleMessageTimeWidget(this.message, {super.key});
-
+class WhatsAppMessageWidget extends StatelessWidget {
   final Message message;
+
+  const WhatsAppMessageWidget(
+    this.message, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3.0),
-      child: Row(
+    return receiptWidget;
+  }
+
+  Widget get receiptWidget => Row(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(DateTime.fromMillisecondsSinceEpoch(message.createdAt)
-              .getTimeFromDateTime),
-          if (message.status == MessageStatus.pending) ...[
-            const Icon(Icons.check_box)
-          ]
+          Text(
+              DateTime.fromMillisecondsSinceEpoch(message.createdAt)
+                  .getTimeFromDateTime,
+              style: const TextStyle(color: Color(0xffFCD8DC), fontSize: 11)),
+          const SizedBox(width: 5),
+          getReceipt()
         ],
-      ),
-    );
+      );
+
+  Widget getReceipt() {
+    switch (message.status) {
+      case DeliveryStatus.delivered:
+        return const Icon(Icons.done_all, color: Color(0xffFCD8DC), size: 15);
+      case DeliveryStatus.read:
+        return const Icon(Icons.done_all, color: Colors.blue, size: 15);
+      case DeliveryStatus.undelivered:
+        return const Icon(Icons.check, color: Color(0xffFCD8DC), size: 15);
+      case DeliveryStatus.pending:
+        return const Icon(Icons.schedule, color: Color(0xffFCD8DC), size: 15);
+      default:
+        return const Icon(Icons.check, color: Colors.blue);
+    }
   }
 }

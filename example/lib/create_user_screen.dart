@@ -1,4 +1,4 @@
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:example/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -13,8 +13,8 @@ class UserFormScreen extends StatefulWidget {
 
 class _UserFormScreenState extends State<UserFormScreen> {
   final profileManager = serviceLocator
-      .get<ChatViewController>()
-      .chatViewExtension
+      .get<ChatBookController>()
+      .chatBookExtension
       ?.serviceExtension
       ?.dataManager
       ?.profileManager as SqfliteUserProfileService;

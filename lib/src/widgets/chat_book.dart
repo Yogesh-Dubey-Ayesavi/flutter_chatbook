@@ -1,30 +1,8 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+part of '../../flutter_chatbook.dart';
 
-part of '../../chatview.dart';
-
-class ChatView extends StatefulWidget {
-  const ChatView({
-    Key? key,
+class ChatBook extends StatefulWidget {
+  const ChatBook({
+    super.key,
     required this.chatController,
     required this.currentUser,
     this.isCupertinoApp = false,
@@ -41,19 +19,15 @@ class ChatView extends StatefulWidget {
     this.isLastPage,
     this.appBar,
     this.cupertinoWidgetConfig,
-    ChatBackgroundConfiguration? chatBackgroundConfig,
+    this.chatBackgroundConfig = const ChatBackgroundConfiguration(),
     this.typeIndicatorConfig,
     this.sendMessageBuilder,
     this.showTypingIndicator = false,
     this.sendMessageConfig,
-    required this.chatViewState,
-    ChatViewStateConfiguration? chatViewStateConfig,
+    required this.chatBookState,
+    this.chatBookStateConfig = const ChatBookStateConfiguration(),
     this.featureActiveConfig = const FeatureActiveConfig(),
-  })  : chatBackgroundConfig =
-            chatBackgroundConfig ?? const ChatBackgroundConfiguration(),
-        chatViewStateConfig =
-            chatViewStateConfig ?? const ChatViewStateConfiguration(),
-        super(key: key);
+  });
 
   /// Provides configuration related to user profile circle avatar.
   final ProfileCircleConfiguration? profileCircleConfig;
@@ -95,7 +69,7 @@ class ChatView extends StatefulWidget {
 
   /// Provides call back when user tap on send button in text field. It returns
   /// message, reply message and message type.
-  final StringMessageCallBack? onSendTap;
+  final MessageCallBack? onSendTap;
 
   /// Provides builder which helps you to make custom text field and functionality.
   final ReplyMessageWithReturnWidget? sendMessageBuilder;
@@ -115,10 +89,10 @@ class ChatView extends StatefulWidget {
   final SendMessageConfiguration? sendMessageConfig;
 
   /// Provides current state of chat.
-  final ChatViewState chatViewState;
+  final ChatBookState chatBookState;
 
   /// Provides configuration for chat view state appearance and functionality.
-  final ChatViewStateConfiguration? chatViewStateConfig;
+  final ChatBookStateConfiguration? chatBookStateConfig;
 
   /// Provides current user which is sending messages.
   final ChatUser currentUser;
@@ -126,7 +100,7 @@ class ChatView extends StatefulWidget {
   /// Provides configuration for turn on/off specific features.
   final FeatureActiveConfig featureActiveConfig;
 
-  /// Provides parameter so user can assign ChatViewAppbar.
+  /// Provides parameter so user can assign ChatBookAppbar.
   final Widget? appBar;
 
   final bool isCupertinoApp;
@@ -134,24 +108,23 @@ class ChatView extends StatefulWidget {
   final CupertinoWidgetConfiguration? cupertinoWidgetConfig;
 
   @override
-  State<ChatView> createState() => _ChatViewState();
+  State<ChatBook> createState() => _ChatBookState();
 }
 
-class _ChatViewState extends State<ChatView>
+class _ChatBookState extends State<ChatBook>
     with SingleTickerProviderStateMixin {
   ValueNotifier<Message?> replyMessageNotifier = ValueNotifier(null);
 
   ChatController get chatController => widget.chatController;
-
   // bool get showTypingIndicator => widget.showTypingIndicator;
 
   ChatBackgroundConfiguration get chatBackgroundConfig =>
       widget.chatBackgroundConfig;
 
-  ChatViewState get chatViewState => widget.chatViewState;
+  ChatBookState get chatBookState => widget.chatBookState;
 
-  ChatViewStateConfiguration? get chatViewStateConfig =>
-      widget.chatViewStateConfig;
+  ChatBookStateConfiguration? get chatBookStateConfig =>
+      widget.chatBookStateConfig;
 
   FeatureActiveConfig get featureActiveConfig => widget.featureActiveConfig;
 
@@ -160,7 +133,7 @@ class _ChatViewState extends State<ChatView>
   @override
   void initState() {
     super.initState();
-    setLocaleMessages('en', ReceiptsCustomMessages());
+    GetIt.I.registerSingleton<ChatBook>(widget);
     focusNode = FocusNode();
     // Adds current user in users list.
     chatController.chatUsers.add(widget.currentUser);
@@ -173,10 +146,10 @@ class _ChatViewState extends State<ChatView>
     // ignore: deprecated_member_use_from_same_package
     if (widget.showTypingIndicator ||
         widget.chatController.showTypingIndicator &&
-            chatViewState.hasMessages) {
+            chatBookState.hasMessages) {
       chatController.scrollToLastMessage();
     }
-    return ChatViewInheritedWidget(
+    return ChatBookInheritedWidget(
       isCupertinoApp: widget.isCupertinoApp,
       chatController: chatController,
       cupertinoWidgetConfig: widget.cupertinoWidgetConfig,
@@ -237,13 +210,10 @@ class _ChatViewState extends State<ChatView>
     );
   }
 
-  void _onSendTap(
-      String message, Message? replyMessage, MessageType messageType,
-      {Duration? duration}) {
+  void _onSendTap(Message message) {
     if (widget.sendMessageBuilder == null) {
       if (widget.onSendTap != null) {
-        widget.onSendTap!(message, replyMessage, messageType,
-            duration: duration);
+        widget.onSendTap!(message);
       }
       _assignReplyMessage();
     }
@@ -251,24 +221,24 @@ class _ChatViewState extends State<ChatView>
   }
 
   Widget getWidget() {
-    if (chatViewState.isLoading) {
-      return ChatViewStateWidget(
-        chatViewStateWidgetConfig: chatViewStateConfig?.loadingWidgetConfig,
-        chatViewState: chatViewState,
+    if (chatBookState.isLoading) {
+      return ChatBookStateWidget(
+        chatBookStateWidgetConfig: chatBookStateConfig?.loadingWidgetConfig,
+        chatBookState: chatBookState,
       );
-    } else if (chatViewState.noMessages) {
-      return ChatViewStateWidget(
-        chatViewStateWidgetConfig: chatViewStateConfig?.noMessageWidgetConfig,
-        chatViewState: chatViewState,
-        onReloadButtonTap: chatViewStateConfig?.onReloadButtonTap,
+    } else if (chatBookState.noMessages) {
+      return ChatBookStateWidget(
+        chatBookStateWidgetConfig: chatBookStateConfig?.noMessageWidgetConfig,
+        chatBookState: chatBookState,
+        onReloadButtonTap: chatBookStateConfig?.onReloadButtonTap,
       );
-    } else if (chatViewState.isError) {
-      return ChatViewStateWidget(
-        chatViewStateWidgetConfig: chatViewStateConfig?.errorWidgetConfig,
-        chatViewState: chatViewState,
-        onReloadButtonTap: chatViewStateConfig?.onReloadButtonTap,
+    } else if (chatBookState.isError) {
+      return ChatBookStateWidget(
+        chatBookStateWidgetConfig: chatBookStateConfig?.errorWidgetConfig,
+        chatBookState: chatBookState,
+        onReloadButtonTap: chatBookStateConfig?.onReloadButtonTap,
       );
-    } else if (chatViewState.hasMessages) {
+    } else if (chatBookState.hasMessages) {
       return ValueListenableBuilder<Message?>(
         valueListenable: replyMessageNotifier,
         builder: (_, state, child) {
@@ -311,6 +281,7 @@ class _ChatViewState extends State<ChatView>
   @override
   void dispose() {
     replyMessageNotifier.dispose();
+    serviceLocator.unregister<ChatBook>();
     super.dispose();
   }
 }

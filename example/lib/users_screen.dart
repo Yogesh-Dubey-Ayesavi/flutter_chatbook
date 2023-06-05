@@ -1,4 +1,4 @@
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:example/service_locator.dart';
 import 'package:flutter/material.dart';
 
@@ -14,21 +14,21 @@ class _UserListScreenState extends State<UserListScreen> {
   late ValueNotifier<List<ChatUser>> _userListNotifier;
 
   SqfliteUserProfileService? get _userProfileService => serviceLocator
-      .get<ChatViewController>()
-      .chatViewExtension
+      .get<ChatBookController>()
+      .chatBookExtension
       ?.serviceExtension
       ?.dataManager
       ?.profileManager as SqfliteUserProfileService;
 
   SqfLiteChatRoomDataBaseService? get _chatroomService => serviceLocator
-      .get<ChatViewController>()
-      .chatViewExtension
+      .get<ChatBookController>()
+      .chatBookExtension
       ?.serviceExtension
       ?.dataManager
       ?.roomManager as SqfLiteChatRoomDataBaseService;
 
   ChatUser get _currentUser =>
-      serviceLocator.get<ChatViewController>().currentUser;
+      serviceLocator.get<ChatBookController>().currentUser;
 
   @override
   void initState() {

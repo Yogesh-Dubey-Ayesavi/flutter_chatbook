@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chatview/src/values/typedefs.dart';
+import 'package:flutter_chatbook/src/values/typedefs.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../models/models.dart';

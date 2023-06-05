@@ -1,37 +1,17 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class ChatUITextField extends StatefulWidget {
-  const ChatUITextField({
-    Key? key,
-    this.sendMessageConfig,
-    required this.focusNode,
-    required this.textEditingController,
-    required this.onPressed,
-    required this.onRecordingComplete,
-    required this.onImageSelected,
-    required this.chatController,
-  }) : super(key: key);
+  const ChatUITextField(
+      {Key? key,
+      this.sendMessageConfig,
+      required this.focusNode,
+      required this.textEditingController,
+      required this.onPressed,
+      required this.onRecordingComplete,
+      required this.onImageSelected,
+      required this.chatController,
+      this.showToolBarButtons = false})
+      : super(key: key);
 
   /// Provides configuration of default text field in chat.
   final SendMessageConfiguration? sendMessageConfig;
@@ -49,9 +29,13 @@ class ChatUITextField extends StatefulWidget {
   final Function(String? path, Duration? duration) onRecordingComplete;
 
   /// Provides callback when user select images from camera/gallery.
-  final StringsCallBack onImageSelected;
+  final void Function(String imagePath, String error, int? size, String? name)
+      onImageSelected;
 
   final ChatController chatController;
+
+  /// Whether to show toolbarbuttons at the text field
+  final bool showToolBarButtons;
 
   @override
   State<ChatUITextField> createState() => _ChatUITextFieldState();
@@ -62,9 +46,12 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
 
   final ValueNotifier<bool> isUserTagging = ValueNotifier(false);
 
-  ChatUser? get currentUser => ChatViewInheritedWidget.of(context)?.currentUser;
-
   final ImagePicker _imagePicker = ImagePicker();
+
+  List<NewMessageSupport> get messageExtensions =>
+      widget.chatController.chatBookController?.chatBookExtension
+          ?.widgetsExtension?.messageTypes ??
+      [];
 
   RecorderController? controller;
 
@@ -90,7 +77,13 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
   ValueNotifier<TypeWriterStatus> composingStatus =
       ValueNotifier(TypeWriterStatus.typed);
 
+  List<NewMessageSupport> get lessPriorityExtensions => messageExtensions
+      .where((element) => element.priority != ToolBarPriority.high)
+      .toList();
+
   late Debouncer debouncer;
+
+  ChatUser? currentUser;
 
   @override
   void initState() {
@@ -120,6 +113,14 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       widget.sendMessageConfig?.textFieldConfig?.onMessageTyping
           ?.call(composingStatus.value);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (provide != null) {
+      currentUser = provide!.currentUser;
+    }
   }
 
   @override
@@ -247,6 +248,14 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                 color: Colors.grey.shade600,
                                 letterSpacing: 0.25,
                               ),
+                          prefixIcon: IconButton(
+                            constraints: const BoxConstraints(),
+                            onPressed: () =>
+                                _showEmojiBottomSheet.call(context),
+                            icon: sendMessageConfig?.emojiPickerIcon ??
+                                Icon(Icons.emoji_emotions_outlined,
+                                    color: sendMessageConfig?.emojiPickerColor),
+                          ),
                           contentPadding: textFieldConfig?.contentPadding ??
                               const EdgeInsets.symmetric(horizontal: 6),
                           border: _outLineBorder,
@@ -263,7 +272,8 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                   ValueListenableBuilder<String>(
                     valueListenable: _inputText,
                     builder: (_, inputTextValue, child) {
-                      if (widget.textEditingController.text.trim().isNotEmpty) {
+                      if (widget.textEditingController.text.trim().isNotEmpty ||
+                          widget.showToolBarButtons) {
                         return IconButton(
                           color: sendMessageConfig?.defaultSendButtonColor ??
                               Colors.green,
@@ -308,6 +318,30 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                           ?.galleryIconColor,
                                     ),
                               ),
+                              if ((widget
+                                      .chatController
+                                      .chatBookController
+                                      ?.chatBookExtension
+                                      ?.widgetsExtension
+                                      ?.messageTypes
+                                      .isNotEmpty) ??
+                                  false) ...[..._getActionWidgets()],
+                              if (lessPriorityExtensions.isNotEmpty) ...[
+                                IconButton(
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () =>
+                                      _onExtensionPress.call(context),
+                                  icon: imagePickerIconsConfig
+                                          ?.attachMentPickerIcon ??
+                                      Transform.rotate(
+                                          angle: 225,
+                                          child: Icon(
+                                            Icons.attachment,
+                                            color: imagePickerIconsConfig
+                                                ?.attachMentIconColor,
+                                          )),
+                                ),
+                              ]
                             ],
                             if (widget.sendMessageConfig?.allowRecordingVoice ??
                                 true &&
@@ -338,6 +372,63 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
     );
   }
 
+  void _showEmojiBottomSheet(BuildContext context) =>
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (context) => EmojiPickerWidget(onSelected: (emoji) {
+          widget.textEditingController.text += emoji;
+          _onChanged(widget.textEditingController.text);
+        }),
+      );
+
+  List<Widget> _getActionWidgets() {
+    return widget.chatController.chatBookController!.chatBookExtension!
+        .widgetsExtension!.messageTypes
+        .where((element) => element.priority.isHigh)
+        .toList()
+        .map((e) => IconButton(
+              constraints: const BoxConstraints(),
+              onPressed: () => e.onMessageCreation.call(context, currentUser!),
+              icon: e.icon ?? Text(e.title),
+            ))
+        .toList();
+  }
+
+  void _onExtensionPress(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 45 / 100,
+                maxWidth: double.infinity,
+              ),
+              child: ListView.builder(
+                itemCount: lessPriorityExtensions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                      onTap: () => _onTilePress.call(index),
+                      title: Text(messageExtensions[index].title),
+                      leading: messageExtensions[index].icon
+                      // other ListTile properties
+                      );
+                },
+              ));
+        });
+  }
+
+  _onTilePress(int index) async {
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+    final msg = await messageExtensions[index]
+        .onMessageCreation
+        .call(context, currentUser!);
+    if (msg != null) {
+      widget.chatController.addMessage(msg);
+    }
+  }
+
   Future<void> _recordOrStop() async {
     assert(
       defaultTargetPlatform == TargetPlatform.iOS ||
@@ -358,9 +449,11 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
   void _onIconPressed(ImageSource imageSource) async {
     try {
       final XFile? image = await _imagePicker.pickImage(source: imageSource);
-      widget.onImageSelected(image?.path ?? '', '');
+
+      widget.onImageSelected(
+          image?.path ?? '', '', await image?.length() ?? 0, image?.name);
     } catch (e) {
-      widget.onImageSelected('', e.toString());
+      widget.onImageSelected('', e.toString(), null, null);
     }
   }
 

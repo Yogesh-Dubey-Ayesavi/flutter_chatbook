@@ -1,25 +1,4 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class ImageMessageView extends StatelessWidget {
   const ImageMessageView({
@@ -30,6 +9,7 @@ class ImageMessageView extends StatelessWidget {
     this.messageReactionConfig,
     this.outgoingChatBubbleConfig,
     this.highlightImage = false,
+    required this.isLastMessage,
     this.highlightScale = 1.2,
     this.receiptsBuilderVisibility = true,
   }) : super(key: key);
@@ -56,6 +36,9 @@ class ImageMessageView extends StatelessWidget {
 
   /// To controll receiptsBuilderVisibility.
   final bool receiptsBuilderVisibility;
+
+  /// Whether message is last or no for displaying receipts
+  final bool isLastMessage;
 
   String get imageUrl => message.uri;
 
@@ -160,14 +143,18 @@ class ImageMessageView extends StatelessWidget {
                               ),
                             ),
                             if (receiptsBuilderVisibility &&
-                                isMessageBySender &&
+                                    isMessageBySender &&
+                                    outgoingChatBubbleConfig
+                                            ?.receiptsWidgetConfig
+                                            ?.showReceiptsIn ==
+                                        ShowReceiptsIn.allInside ||
                                 outgoingChatBubbleConfig?.receiptsWidgetConfig
-                                        ?.receiptsBubblePreference ==
-                                    ReceiptsBubblePreference.inside) ...[
+                                        ?.showReceiptsIn ==
+                                    ShowReceiptsIn.lastMessageInside) ...[
                               outgoingChatBubbleConfig
                                       ?.receiptsWidgetConfig?.receiptsBuilder
                                       ?.call(message) ??
-                                  WhatsappStyleMessageTimeWidget(message)
+                                WhatsAppMessageWidget(message)
                             ]
                           ])),
                 ),

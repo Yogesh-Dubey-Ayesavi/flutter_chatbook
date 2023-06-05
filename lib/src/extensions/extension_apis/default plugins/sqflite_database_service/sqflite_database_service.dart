@@ -1,8 +1,8 @@
-import 'package:chatview/src/utils/constants/constants.dart';
+import 'package:flutter_chatbook/src/utils/constants/constants.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import './sql_queries.dart';
-import '../../../../chatview.dart';
+import 'sql_queries.dart';
+import '../../../../../flutter_chatbook.dart';
 
 class SqfliteDataBaseService extends DatabaseManager<SqfliteUserProfileService,
     SqfLiteChatRoomDataBaseService> {

@@ -1,31 +1,11 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class TextMessageView extends StatelessWidget {
-  const TextMessageView({
+  TextMessageView({
     Key? key,
     required this.isMessageBySender,
     required this.message,
+    required this.isLastMessage,
     this.chatBubbleMaxWidth,
     this.inComingChatBubbleConfig,
     this.outgoingChatBubbleConfig,
@@ -62,6 +42,65 @@ class TextMessageView extends StatelessWidget {
   /// To controll receiptsBuilderVisibility.
   final bool receiptsBuilderVisibility;
 
+  /// Whether message is last or no for displaying receipts
+  final bool isLastMessage;
+
+  final ValueNotifier<bool> _isExpanded = ValueNotifier(false);
+
+  final int _max = 400;
+
+  Widget textWidget(TextTheme textTheme, String text) => ParsedText(
+        selectable: false,
+        text: text,
+        style: _textStyle ??
+            textTheme.bodyMedium!.copyWith(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+        parse: [
+          MatchText(
+            pattern: PatternStyle.bold.pattern,
+            style: PatternStyle.bold.textStyle,
+            renderText: ({required String str, required String pattern}) => {
+              'display': str.replaceAll(
+                PatternStyle.bold.from,
+                PatternStyle.bold.replace,
+              ),
+            },
+          ),
+          MatchText(
+            pattern: PatternStyle.italic.pattern,
+            style: PatternStyle.italic.textStyle,
+            renderText: ({required String str, required String pattern}) => {
+              'display': str.replaceAll(
+                PatternStyle.italic.from,
+                PatternStyle.italic.replace,
+              ),
+            },
+          ),
+          MatchText(
+            pattern: PatternStyle.lineThrough.pattern,
+            style: (PatternStyle.lineThrough.textStyle),
+            renderText: ({required String str, required String pattern}) => {
+              'display': str.replaceAll(
+                PatternStyle.lineThrough.from,
+                PatternStyle.lineThrough.replace,
+              ),
+            },
+          ),
+          MatchText(
+            pattern: PatternStyle.code.pattern,
+            style: (PatternStyle.code.textStyle),
+            renderText: ({required String str, required String pattern}) => {
+              'display': str.replaceAll(
+                PatternStyle.code.from,
+                PatternStyle.code.replace,
+              ),
+            },
+          ),
+        ],
+      );
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -94,78 +133,52 @@ class TextMessageView extends StatelessWidget {
                         linkPreviewConfig: _linkPreviewConfig,
                         url: textMessage,
                       )
-                    : ParsedText(
-                        selectable: false,
-                        text: message.text,
-                        style: _textStyle ??
-                            textTheme.bodyMedium!.copyWith(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                        parse: [
-                          MatchText(
-                            pattern: PatternStyle.bold.pattern,
-                            style: PatternStyle.bold.textStyle,
-                            renderText: (
-                                    {required String str,
-                                    required String pattern}) =>
-                                {
-                              'display': str.replaceAll(
-                                PatternStyle.bold.from,
-                                PatternStyle.bold.replace,
-                              ),
+                    : message.text.length <= _max
+                        ? textWidget(textTheme, message.text)
+                        : ValueListenableBuilder<bool>(
+                            valueListenable: _isExpanded,
+                            builder:
+                                (BuildContext context, value, Widget? child) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  textWidget(
+                                      textTheme,
+                                      !_isExpanded.value
+                                          ? '${message.text.substring(0, _max)}...'
+                                          : message.text),
+                                  GestureDetector(
+                                      onTap: () => _isExpanded.value =
+                                          !_isExpanded.value,
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(5),
+                                          child: !_isExpanded.value
+                                              ? const Text("Read More")
+                                              : const Text("Read Less")))
+                                ],
+                              );
                             },
                           ),
-                          MatchText(
-                            pattern: PatternStyle.italic.pattern,
-                            style: PatternStyle.italic.textStyle,
-                            renderText: (
-                                    {required String str,
-                                    required String pattern}) =>
-                                {
-                              'display': str.replaceAll(
-                                PatternStyle.italic.from,
-                                PatternStyle.italic.replace,
-                              ),
-                            },
-                          ),
-                          MatchText(
-                            pattern: PatternStyle.lineThrough.pattern,
-                            style: (PatternStyle.lineThrough.textStyle),
-                            renderText: (
-                                    {required String str,
-                                    required String pattern}) =>
-                                {
-                              'display': str.replaceAll(
-                                PatternStyle.lineThrough.from,
-                                PatternStyle.lineThrough.replace,
-                              ),
-                            },
-                          ),
-                          MatchText(
-                            pattern: PatternStyle.code.pattern,
-                            style: (PatternStyle.code.textStyle),
-                            renderText: (
-                                    {required String str,
-                                    required String pattern}) =>
-                                {
-                              'display': str.replaceAll(
-                                PatternStyle.code.from,
-                                PatternStyle.code.replace,
-                              ),
-                            },
-                          ),
-                        ],
-                      ),
                 if (receiptsBuilderVisibility &&
                     isMessageBySender &&
                     outgoingChatBubbleConfig
-                            ?.receiptsWidgetConfig?.receiptsBubblePreference ==
-                        ReceiptsBubblePreference.inside) ...[
+                            ?.receiptsWidgetConfig?.showReceiptsIn ==
+                        ShowReceiptsIn.allInside) ...[
                   outgoingChatBubbleConfig
                           ?.receiptsWidgetConfig?.receiptsBuilder
                           ?.call(message) ??
-                      WhatsappStyleMessageTimeWidget(message)
+                      WhatsAppMessageWidget(message)
+                ],
+                if (receiptsBuilderVisibility &&
+                    isMessageBySender &&
+                    outgoingChatBubbleConfig
+                            ?.receiptsWidgetConfig?.showReceiptsIn ==
+                        ShowReceiptsIn.lastMessageInside &&
+                    isLastMessage) ...[
+                  outgoingChatBubbleConfig
+                          ?.receiptsWidgetConfig?.receiptsBuilder
+                          ?.call(message) ??
+                      WhatsAppMessageWidget(message)
                 ],
               ],
             )),

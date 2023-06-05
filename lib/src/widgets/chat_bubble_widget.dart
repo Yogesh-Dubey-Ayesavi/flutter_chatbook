@@ -1,26 +1,4 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class ChatBubbleWidget extends StatefulWidget {
   const ChatBubbleWidget({
@@ -37,6 +15,7 @@ class ChatBubbleWidget extends StatefulWidget {
     this.messageTimeIconColor,
     this.messageConfig,
     this.onReplyTap,
+    this.prevMessage,
     this.reactionPopupConfig,
     this.shouldHighlight = false,
   }) : super(key: key);
@@ -84,6 +63,8 @@ class ChatBubbleWidget extends StatefulWidget {
   /// Flag for when user tap on replied message and highlight actual message.
   final bool shouldHighlight;
 
+  final Message? prevMessage;
+
   final ReactionPopupConfiguration? reactionPopupConfig;
 
   @override
@@ -113,9 +94,24 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
 
   ValueNotifier<double> isOn = ValueNotifier(0.00);
 
+  bool get isPrevMsgAuthorSame =>
+      widget.message.author.id == widget.prevMessage?.author.id;
+
   ChatUser get messagedUser => widget.message.author;
 
   bool selectMultipleMessages = false;
+
+  bool get _enableSwipeToReply =>
+      (featureActiveConfig?.enableSwipeToReply ?? true);
+
+  NewMessageSupport? get extensionMessageSupport => (widget
+              .message.type.isCustom &&
+          (chatController?.chatBookController?.chatBookExtension
+                  ?.widgetsExtension?.messageTypes.isNotEmpty ??
+              false))
+      ? chatController!.chatBookController!.chatBookExtension!.widgetsExtension!
+          .getMessageSuport(widget.message)
+      : null;
 
   @override
   void didChangeDependencies() {
@@ -168,7 +164,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         /// Todo: for our usecase only not for the community.
         condition: false,
         // isCupertino &&
-        //     (ChatViewInheritedWidget.of(context)
+        //     (ChatBookInheritedWidget.of(context)
         //             ?.cupertinoWidgetConfig
         //             ?.cupertinoMenuConfig
         //             ?.showCupertinoContextMenu ??
@@ -179,16 +175,25 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             child: child),
         child: Padding(
           padding: widget.chatBubbleConfig?.padding ??
-              const EdgeInsets.only(left: 5.0, bottom: 5),
+              EdgeInsets.only(left: 5.0, top: isPrevMsgAuthorSame ? 0 : 10),
           child: Padding(
-            padding: widget.chatBubbleConfig?.margin ??
-                const EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.zero,
             child: ConditionalWrapper(
                 condition: selectMultipleMessages,
                 wrapper: (child) => GestureView(
                       message: widget.message,
                       onLongPress: widget.onLongPress,
-                      onDoubleTap: widget.chatBubbleConfig?.onDoubleTap,
+                      onDoubleTap:
+                          featureActiveConfig?.enableDoubleTapToLike ?? false
+                              ? widget.chatBubbleConfig?.onDoubleTap ??
+                                  (message) => currentUser != null
+                                      ? chatController?.setReaction(
+                                          emoji: heart,
+                                          messageId: message.id,
+                                          userId: currentUser!.id,
+                                        )
+                                      : null
+                              : null,
                       isLongPressEnable:
                           (featureActiveConfig?.enableReactionPopup ?? true) ||
                               (featureActiveConfig?.enableReplySnackBar ??
@@ -197,7 +202,14 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                     ),
                 child: Column(children: [
                   featureActiveConfig?.enableSwipeToSeeTime != true
-                      ? _swipeWidget(_messageRow)
+                      ? ConditionalWrapper(
+                          condition: extensionMessageSupport != null
+                              ? (_enableSwipeToReply &&
+                                  (extensionMessageSupport?.isSwipeable ??
+                                      true))
+                              : _enableSwipeToReply,
+                          wrapper: (child) => _swipeWidget(child),
+                          child: _messageRow)
                       : _messageRow,
                   if (isLastMessage && chatController!.showTypingIndicator) ...[
                     Row(
@@ -289,24 +301,39 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
         children: [
           if (!isMessageBySender &&
               (featureActiveConfig?.enableOtherUserProfileAvatar ?? true))
-            ProfileCircle(
-              bottomPadding:
-                  widget.message.reaction?.reactions.isNotEmpty ?? false
-                      ? profileCircleConfig?.bottomPadding ?? 15
-                      : profileCircleConfig?.bottomPadding ?? 2,
-              profileCirclePadding: profileCircleConfig?.padding,
-              imageUrl: messagedUser.imageUrl,
-              circleRadius: profileCircleConfig?.circleRadius,
-              onTap: () => _onAvatarTap(messagedUser),
-              onLongPress: () => _onAvatarLongPress(messagedUser),
-            ),
+            if (!isPrevMsgAuthorSame) ...[
+              ProfileCircle(
+                bottomPadding:
+                    widget.message.reaction?.reactions.isNotEmpty ?? false
+                        ? profileCircleConfig?.bottomPadding ?? 15
+                        : profileCircleConfig?.bottomPadding ?? 2,
+                profileCirclePadding: profileCircleConfig?.padding,
+                imageUrl: messagedUser.imageUrl,
+                circleRadius: profileCircleConfig?.circleRadius,
+                onTap: () => _onAvatarTap(messagedUser),
+                onLongPress: () => _onAvatarLongPress(messagedUser),
+              )
+            ],
+          if (isPrevMsgAuthorSame &&
+              (featureActiveConfig?.enableOtherUserProfileAvatar ?? true)) ...[
+            const SizedBox(width: 47)
+          ],
           featureActiveConfig?.enableSwipeToSeeTime == true
-              ? _swipeWidget(_messagesWidgetColumn())
+              ? ConditionalWrapper(
+                  condition: extensionMessageSupport != null
+                      ? (_enableSwipeToReply &&
+                          (extensionMessageSupport?.isSwipeable ?? false))
+                      : _enableSwipeToReply,
+                  wrapper: (child) => _swipeWidget(child),
+                  child: _messagesWidgetColumn())
               : _messagesWidgetColumn(),
           if (isMessageBySender &&
+                  widget.chatBubbleConfig?.outgoingChatBubbleConfig
+                          ?.receiptsWidgetConfig?.showReceiptsIn ==
+                      ShowReceiptsIn.allOutside ||
               widget.chatBubbleConfig?.outgoingChatBubbleConfig
-                      ?.receiptsWidgetConfig?.receiptsBubblePreference ==
-                  ReceiptsBubblePreference.outSide) ...[getReciept()],
+                      ?.receiptsWidgetConfig?.showReceiptsIn ==
+                  ShowReceiptsIn.lastMessageOutside) ...[getReciept()],
           if (isMessageBySender &&
               (featureActiveConfig?.enableCurrentUserProfileAvatar ?? true))
             ProfileCircle(
@@ -332,9 +359,9 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
   Widget getReciept() {
     final showReceipts = widget.chatBubbleConfig?.outgoingChatBubbleConfig
             ?.receiptsWidgetConfig?.showReceiptsIn ??
-        ShowReceiptsIn.lastMessage;
+        ShowReceiptsIn.lastMessageOutside;
 
-    if (showReceipts == ShowReceiptsIn.all) {
+    if (showReceipts == ShowReceiptsIn.allOutside) {
       if (featureActiveConfig?.receiptsBuilderVisibility ?? true) {
         return widget.chatBubbleConfig?.outgoingChatBubbleConfig
                 ?.receiptsWidgetConfig?.receiptsBuilder
@@ -342,7 +369,8 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             sendMessageAnimationBuilder(widget.message.status);
       }
       return const SizedBox();
-    } else if (showReceipts == ShowReceiptsIn.lastMessage && isLastMessage) {
+    } else if (showReceipts == ShowReceiptsIn.lastMessageOutside &&
+        isLastMessage) {
       if (featureActiveConfig?.receiptsBuilderVisibility ?? true) {
         return widget.chatBubbleConfig?.outgoingChatBubbleConfig
                 ?.receiptsWidgetConfig?.receiptsBuilder
@@ -368,7 +396,9 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
-          if ((chatController?.chatUsers.length ?? 0) > 1 && !isMessageBySender)
+          if ((chatController?.chatUsers.length ?? 0) > 1 &&
+              !isMessageBySender &&
+              !isPrevMsgAuthorSame)
             Padding(
               padding:
                   widget.chatBubbleConfig?.inComingChatBubbleConfig?.padding ??

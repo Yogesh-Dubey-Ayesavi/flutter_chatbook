@@ -13,8 +13,10 @@ dependencies:
     sdk: 'flutter'
   cupertino_icons: ^1.0.5
   scrollable_positioned_list_extended: ^0.3.8
-  chatview:
+  flutter_chatbook:
     path: ../
+  giphy_message:
+    path: ../packages/giphy_message/  
   uuid: ^3.0.7
   scroll_to_index: ^3.0.1
   moxxmpp:

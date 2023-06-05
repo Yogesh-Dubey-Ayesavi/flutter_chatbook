@@ -1,4 +1,4 @@
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
@@ -44,7 +44,7 @@ abstract class ImageMessage extends Message {
     String? roomId,
     bool? showStatus,
     required num size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     MessageType? type,
     int? updatedAt,
     required String uri,
@@ -64,7 +64,7 @@ abstract class ImageMessage extends Message {
     String? remoteId,
     String? roomId,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
   }) =>
       _ImageMessage(
@@ -134,7 +134,7 @@ abstract class ImageMessage extends Message {
     String? roomId,
     bool? showStatus,
     num? size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
     String? uri,
     double? width,
@@ -181,7 +181,7 @@ class _ImageMessage extends ImageMessage {
     String? roomId,
     bool? showStatus,
     num? size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
     String? uri,
     double? width,

@@ -1,10 +1,10 @@
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class SendingMessageAnimatingWidget extends StatefulWidget {
   const SendingMessageAnimatingWidget(this.status, {Key? key})
       : super(key: key);
 
-  final MessageStatus status;
+  final DeliveryStatus status;
 
   @override
   State<SendingMessageAnimatingWidget> createState() =>
@@ -13,7 +13,7 @@ class SendingMessageAnimatingWidget extends StatefulWidget {
 
 class _SendingMessageAnimatingWidgetState
     extends State<SendingMessageAnimatingWidget> with TickerProviderStateMixin {
-  bool get isSent => widget.status != MessageStatus.pending;
+  bool get isSent => widget.status != DeliveryStatus.pending;
 
   bool isVisible = false;
 
@@ -30,7 +30,7 @@ class _SendingMessageAnimatingWidgetState
 
   @override
   Widget build(BuildContext context) {
-    if (widget.status != MessageStatus.read) {
+    if (widget.status != DeliveryStatus.read) {
       _attachOnStatusChangeListeners();
       return AnimatedPadding(
         curve: Curves.easeInOutExpo,

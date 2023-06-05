@@ -1,17 +1,17 @@
-import 'package:chatview/src/extensions/extension_apis/service/backend_service.dart';
-import 'package:chatview/src/extensions/extension_apis/widgets%20extension/widget_extension.dart';
-import '../../../chatview.dart';
+import 'package:flutter_chatbook/src/extensions/extension_apis/service/backend_service.dart';
+import '../../../flutter_chatbook.dart';
 
-/// `ChatViewExtension` API is used for extending services and using
-/// this package with custom plugins. `ChatViewExtension` can be used for
+/// `ChatBookExtension` API is used for extending services and using
+/// this package with custom plugins. `ChatBookExtension` can be used for
 /// extending support for custom messages and custom servies.
-/// [ChatViewController] and [ChatView] can utilise only one `ChatViewExtension`
+/// [ChatBookController] and [ChatBook] can utilise only one `ChatBookExtension`
 /// at a time.
-/// `ChatViewExtension` hold [ServiceExtension] and [WidgetsExtension] for
+/// `ChatBookExtension` hold [ServiceExtension] and [WidgetsExtension] for
 /// extending services and support for new messages respectively. See [ServiceExtension] and
 /// [WidgetsExtension] for more info.
-class ChatViewExtension {
-  const ChatViewExtension({this.serviceExtension, this.widgetsExtension});
+class ChatBookExtension {
+  
+  const ChatBookExtension({this.serviceExtension, this.widgetsExtension});
 
   /// Used for extending services see [ServiceExtension].
   final ServiceExtension? serviceExtension;
@@ -27,12 +27,12 @@ class ChatViewExtension {
 /// ### DatabaseManager
 /// `DatabaseManager` is used for providing support for custom
 /// database, it consists of various CRUD methods that will be utilised by
-/// [ChatView] under the hood.
+/// [ChatBook] under the hood.
 /// It is the place where you can implement persistence and storing logics see [DatabaseManager] for more.
 ///
 ///### BackendManager
 /// `BackendManager` is used for providing support for handling transmission and recieving messages
-/// [ChatView] will utlise this when a [Room] sends or recieves a message see [BackendManager] for more info.
+/// [ChatBook] will utlise this when a [Room] sends or recieves a message see [BackendManager] for more info.
 class ServiceExtension<T extends DatabaseManager> {
   const ServiceExtension({this.dataManager, this.backendService});
 

@@ -1,19 +1,23 @@
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
-import 'partial_custom.dart';
 part 'custom_message.g.dart';
 
 /// A class that represents custom message. Use [metadata] to store anything
 /// you want.
+///
+
+final JsonConstructor customMessageConstructors = {};
+
 @JsonSerializable(explicitToJson: true)
 @immutable
-abstract class CustomMessage extends Message {
+class CustomMessage extends Message {
   /// Creates a custom message.
-  CustomMessage._({
+  CustomMessage({
     required super.author,
     required super.createdAt,
     required super.id,
+    required this.customType,
     super.metadata,
     super.remoteId,
     super.repliedMessage,
@@ -21,56 +25,30 @@ abstract class CustomMessage extends Message {
     super.showStatus,
     super.status,
     super.reaction,
-    MessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.custom);
+  }) : super(type: MessageType.custom);
 
-  factory CustomMessage({
-    required ChatUser author,
-    required int createdAt,
-    Reaction? reaction,
-    required String id,
-    Map<String, dynamic>? metadata,
-    String? remoteId,
-    Message? repliedMessage,
-    String? roomId,
-    bool? showStatus,
-    MessageStatus? status,
-    MessageType? type,
-    int? updatedAt,
-  }) = _CustomMessage;
+  /// Give custom type to the message for uniquely identifying the builders
+  /// associated with each message.
+  /// It must be defined in all small cases.
+  /// See Difference between `type` and `customType` below
+  /// | property    | customType                                                                                                                                               | type                                                                                                                                                                                                              |   |   |
+  /// |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|---|
+  /// | datatype    | `String`                                                                                                                                                 | `MessageType`                                                                                                                                                                                                     |   |   |
+  /// | description | `customType` is defined inside  `CustomMessage` to uniquely identify each `CustomMessage` as  they all are going to have `type` as `MessageType.custom`  | `type` is used each type of message  it defines which kind of message it is primarily there are 4 types of messages they are `MessageType.text`,`MessageType.voice`, `MessageType.image` and `MessageType.custom` |   |   |
+  /// |             |                                                                                                                                                          |                                                                                                                                                                                                                   |   |   |
+  final String customType;
 
   /// Creates a custom message from a map (decoded JSON).
-  factory CustomMessage.fromJson(Map<String, dynamic> json) =>
-      _$CustomMessageFromJson(json);
-
-  /// Creates a full custom message from a partial one.
-  factory CustomMessage.fromPartial({
-    required ChatUser author,
-    required int createdAt,
-    required String id,
-    required PartialCustom partialCustom,
-    String? remoteId,
-    String? roomId,
-    bool? showStatus,
-    MessageStatus? status,
-    Reaction? reaction,
-    int? updatedAt,
-  }) =>
-      _CustomMessage(
-        author: author,
-        createdAt: createdAt,
-        id: id,
-        metadata: partialCustom.metadata,
-        remoteId: remoteId,
-        reaction: reaction,
-        repliedMessage: partialCustom.repliedMessage,
-        roomId: roomId,
-        showStatus: showStatus,
-        status: status,
-        type: MessageType.custom,
-        updatedAt: updatedAt,
-      );
+  factory CustomMessage.fromJson(Map<String, dynamic> json) {
+    print(json);
+    final constructor = customMessageConstructors[json['customType']];
+    if (constructor != null) {
+      return constructor(json);
+    } else {
+      throw Exception('Unknown messageType ${[json["customType"]]}');
+    }
+  }
 
   /// Equatable props.
   @override
@@ -78,6 +56,7 @@ abstract class CustomMessage extends Message {
         author,
         createdAt,
         id,
+        customType,
         metadata,
         remoteId,
         repliedMessage,
@@ -91,71 +70,33 @@ abstract class CustomMessage extends Message {
     ChatUser? author,
     int? createdAt,
     String? id,
+    String? customType,
     Map<String, dynamic>? metadata,
     String? remoteId,
     Message? repliedMessage,
     Reaction? reaction,
     String? roomId,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
-  });
+  }) =>
+      CustomMessage(
+        customType: customType ?? this.customType,
+        author: author ?? this.author,
+        createdAt: createdAt ?? this.createdAt,
+        id: id ?? this.id,
+        metadata: metadata ?? this.metadata,
+        reaction: reaction ?? this.reaction,
+        remoteId: remoteId ?? this.remoteId,
+        repliedMessage: repliedMessage ?? this.repliedMessage,
+        roomId: roomId ?? this.roomId ?? roomId,
+        showStatus: showStatus ?? this.showStatus,
+        status: status ?? this.status,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
 
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
   Map<String, dynamic> toJson() => _$CustomMessageToJson(this);
 }
-
-/// A utility class to enable better copyWith.
-class _CustomMessage extends CustomMessage {
-  _CustomMessage({
-    required super.author,
-    required super.createdAt,
-    required super.id,
-    super.metadata,
-    super.reaction,
-    super.remoteId,
-    super.repliedMessage,
-    super.roomId,
-    super.showStatus,
-    super.status,
-    super.type,
-    super.updatedAt,
-  }) : super._();
-
-  @override
-  Message copyWith({
-    ChatUser? author,
-    int? createdAt,
-    String? id,
-    dynamic reaction,
-    dynamic metadata = _Unset,
-    dynamic remoteId = _Unset,
-    dynamic repliedMessage = _Unset,
-    dynamic roomId,
-    dynamic showStatus = _Unset,
-    dynamic status = _Unset,
-    dynamic updatedAt = _Unset,
-  }) =>
-      _CustomMessage(
-        author: author ?? this.author,
-        createdAt: createdAt ?? this.createdAt,
-        id: id ?? this.id,
-        metadata: metadata == _Unset
-            ? this.metadata
-            : metadata as Map<String, dynamic>?,
-        reaction: reaction == _Unset ? this.reaction : reaction as Reaction?,
-        remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
-        repliedMessage: repliedMessage == _Unset
-            ? this.repliedMessage
-            : repliedMessage as Message?,
-        roomId: roomId == _Unset ? this.roomId : roomId as String?,
-        showStatus:
-            showStatus == _Unset ? this.showStatus : showStatus as bool?,
-        status: status == _Unset ? this.status : status as MessageStatus?,
-        updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
-      );
-}
-
-class _Unset {}

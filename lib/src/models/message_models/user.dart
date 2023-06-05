@@ -9,6 +9,8 @@ enum Role { admin, agent, moderator, user }
 
 /// A class that represents user.
 @JsonSerializable()
+
+///TODO: have username => null
 @immutable
 abstract class ChatUser extends Equatable {
   /// Creates a user.

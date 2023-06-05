@@ -1,4 +1,4 @@
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class DefaultReactionPopup extends StatelessWidget {
   const DefaultReactionPopup(

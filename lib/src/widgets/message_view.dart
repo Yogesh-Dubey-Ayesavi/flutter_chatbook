@@ -1,25 +1,4 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class MessageView extends StatefulWidget {
   const MessageView({
@@ -95,13 +74,28 @@ class _MessageViewState extends State<MessageView> {
   bool get isLongPressEnable => widget.isLongPressEnable;
 
   bool get isCupertino =>
-      ChatViewInheritedWidget.of(context)?.isCupertinoApp ?? false;
+      ChatBookInheritedWidget.of(context)?.isCupertinoApp ?? false;
+
+  bool get isMessageBySender =>
+      widget.message.author.id ==
+      ChatBookInheritedWidget.of(context)?.currentUser.id;
 
   ValueNotifier<bool> isOn = ValueNotifier(false);
 
   bool selectMultipleMessages = false;
 
   bool receiptsVisibility = true;
+
+  bool isLastMessage = false;
+
+  List<NewMessageSupport>? get extensionMessageTypes => (widget
+              .message.type.isCustom &&
+          (widget.controller?.chatBookController?.chatBookExtension
+                  ?.widgetsExtension?.messageTypes.isNotEmpty ??
+              false))
+      ? widget.controller!.chatBookController!.chatBookExtension!
+          .widgetsExtension!.messageTypes
+      : null;
 
   @override
   void didChangeDependencies() {
@@ -111,6 +105,8 @@ class _MessageViewState extends State<MessageView> {
           provide!.featureActiveConfig.selectMultipleMessages;
       receiptsVisibility =
           provide!.featureActiveConfig.receiptsBuilderVisibility;
+      isLastMessage = provide!.chatController.initialMessageList.first.value ==
+          widget.message;
     }
   }
 
@@ -176,6 +172,7 @@ class _MessageViewState extends State<MessageView> {
                 } else if (widget.message.type.isImage) {
                   return ImageMessageView(
                     message: widget.message as ImageMessage,
+                    isLastMessage: isLastMessage,
                     receiptsBuilderVisibility: receiptsVisibility,
                     isMessageBySender: widget.isMessageBySender,
                     imageMessageConfig: messageConfig?.imageMessageConfig,
@@ -186,6 +183,7 @@ class _MessageViewState extends State<MessageView> {
                   );
                 } else if (widget.message.type.isText) {
                   return TextMessageView(
+                    isLastMessage: isLastMessage,
                     inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
                     receiptsBuilderVisibility: receiptsVisibility,
                     outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,
@@ -210,6 +208,60 @@ class _MessageViewState extends State<MessageView> {
                 } else if (widget.message.type.isCustom &&
                     messageConfig?.customMessageBuilder != null) {
                   return messageConfig?.customMessageBuilder!(widget.message);
+                } else if (widget.message.type.isCustom &&
+                    (widget.controller?.chatBookController?.chatBookExtension
+                            ?.widgetsExtension?.messageTypes.isNotEmpty ??
+                        false)) {
+                  final index = widget.controller!.chatBookController!
+                      .chatBookExtension!.widgetsExtension!.messageTypes
+                      .indexWhere((element) =>
+                          element.customType ==
+                          (widget.message as CustomMessage).customType);
+                  return Stack(children: [
+                    ConditionalWrapper(
+                      condition: extensionMessageTypes![index].isInsideBubble,
+                      wrapper: (child) {
+                        return Container(
+                            constraints: BoxConstraints(
+                                maxWidth: widget.chatBubbleMaxWidth ??
+                                    MediaQuery.of(context).size.width * 0.75),
+                            padding: _padding ??
+                                const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                            margin: _margin ??
+                                EdgeInsets.fromLTRB(
+                                    5,
+                                    0,
+                                    6,
+                                    widget.message.reaction?.reactions
+                                                .isNotEmpty ??
+                                            false
+                                        ? 15
+                                        : 2),
+                            decoration: BoxDecoration(
+                              color: widget.shouldHighlight
+                                  ? widget.highlightColor
+                                  : _color,
+                              borderRadius: BorderRadius.circular(22),
+                            ),
+                            child: child);
+                      },
+                      child: extensionMessageTypes![index]
+                          .messageBuilder
+                          .call(context, widget.message),
+                    ),
+                    if (extensionMessageTypes![index].isReactable &&
+                        (widget.message.reaction?.reactions.isNotEmpty ??
+                            false))
+                      ReactionWidget(
+                        isMessageBySender: widget.isMessageBySender,
+                        reaction: widget.message.reaction!,
+                        messageReactionConfig:
+                            messageConfig?.messageReactionConfig,
+                      ),
+                  ]);
                 }
               }()) ??
               const SizedBox(),
@@ -220,8 +272,8 @@ class _MessageViewState extends State<MessageView> {
           //     if (widget.isMessageBySender &&
           //         widget.controller?.initialMessageList.last.value.id ==
           //             widget.message.id &&
-          //         widget.message.status == MessageStatus.read) {
-          //       if (ChatViewInheritedWidget.of(context)
+          //         widget.message.status == DeliveryStatus.read) {
+          //       if (ChatBookInheritedWidget.of(context)
           //               ?.featureActiveConfig
           //               .lastSeenAgoBuilderVisibility ??
           //           true) {
@@ -243,6 +295,18 @@ class _MessageViewState extends State<MessageView> {
       ),
     );
   }
+
+  Color get _color => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.color ?? Colors.purple
+      : widget.inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
+
+  EdgeInsetsGeometry? get _padding => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.padding
+      : widget.inComingChatBubbleConfig?.padding;
+
+  EdgeInsetsGeometry? get _margin => widget.isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.margin
+      : widget.inComingChatBubbleConfig?.margin;
 
   @override
   void dispose() {

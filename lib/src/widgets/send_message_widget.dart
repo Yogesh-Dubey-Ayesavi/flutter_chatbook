@@ -1,42 +1,21 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class SendMessageWidget extends StatefulWidget {
-  const SendMessageWidget({
-    Key? key,
-    required this.onSendTap,
-    required this.chatController,
-    this.sendMessageConfig,
-    this.backgroundColor,
-    this.sendMessageBuilder,
-    this.onReplyCallback,
-    required this.replyMessageNotfier,
-    this.onReplyCloseCallback,
-  }) : super(key: key);
+  const SendMessageWidget(
+      {Key? key,
+      required this.onSendTap,
+      required this.chatController,
+      this.sendMessageConfig,
+      this.backgroundColor,
+      this.sendMessageBuilder,
+      this.onReplyCallback,
+      required this.replyMessageNotfier,
+      this.onReplyCloseCallback,
+      this.showToolBarButtons = false})
+      : super(key: key);
 
   /// Provides call back when user tap on send button on text field.
-  final StringMessageCallBack onSendTap;
+  final MessageCallBack onSendTap;
 
   /// Provides configuration for text field appearance.
   final SendMessageConfiguration? sendMessageConfig;
@@ -58,6 +37,9 @@ class SendMessageWidget extends StatefulWidget {
 
   final ValueNotifier<Message?> replyMessageNotfier;
 
+  /// Whether to show toolbarbuttons at the text field
+  final bool showToolBarButtons;
+
   @override
   State<SendMessageWidget> createState() => SendMessageWidgetState();
 }
@@ -76,6 +58,9 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
       : repliedUser?.firstName ?? '';
 
   ChatUser? currentUser;
+
+  WidgetsExtension? get wigetsExtension => widget
+      .chatController.chatBookController?.chatBookExtension?.widgetsExtension;
 
   ChatController? chatController;
 
@@ -204,6 +189,11 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
                                         _voiceReplyMessageView
                                       else if (state.type.isImage)
                                         _imageReplyMessageView
+                                      else if (state.type.isCustom &&
+                                          (wigetsExtension
+                                                  ?.messageTypes.isNotEmpty ??
+                                              false))
+                                        _extensionMessageReplyView
                                       else
                                         (() {
                                           state as TextMessage;
@@ -230,14 +220,14 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
                           valueListenable: _replyMessage,
                         ),
                         ChatUITextField(
-                          focusNode: chatController?.focusNode ?? FocusNode(),
-                          chatController: widget.chatController,
-                          textEditingController: _textEditingController,
-                          onPressed: _onPressed,
-                          sendMessageConfig: widget.sendMessageConfig,
-                          onRecordingComplete: _onRecordingComplete,
-                          onImageSelected: _onImageSelected,
-                        )
+                            focusNode: chatController?.focusNode ?? FocusNode(),
+                            chatController: widget.chatController,
+                            textEditingController: _textEditingController,
+                            onPressed: _onPressed,
+                            sendMessageConfig: widget.sendMessageConfig,
+                            onRecordingComplete: _onRecordingComplete,
+                            onImageSelected: _onImageSelected,
+                            showToolBarButtons: widget.showToolBarButtons)
                       ],
                     ),
                   ),
@@ -269,6 +259,14 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
     );
   }
 
+  Widget get _extensionMessageReplyView {
+    return widget
+        .chatController.chatBookController!.chatBookExtension!.widgetsExtension!
+        .getMessageSuport(replyMessage!)
+        .replyPreview
+        .call(context, replyMessage!);
+  }
+
   Widget get _imageReplyMessageView {
     return Row(
       children: [
@@ -290,15 +288,37 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
 
   void _onRecordingComplete(String? path, Duration? duration) {
     if (path != null) {
-      widget.onSendTap
-          .call(path, replyMessage, MessageType.voice, duration: duration);
+      widget.onSendTap.call(AudioPathMessage(
+        path,
+        id: const Uuid().v4(),
+        author: currentUser!,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        type: MessageType.voice,
+        duration: duration?.inMilliseconds ?? 0,
+        name: "${DateTime.now().millisecondsSinceEpoch}${currentUser!.id}",
+        size: duration?.inMilliseconds ?? 0,
+        repliedMessage: replyMessage,
+      ));
+
       _assignRepliedMessage();
     }
   }
 
-  void _onImageSelected(String imagePath, String error) {
+  void _onImageSelected(
+      String imagePath, String error, int? size, String? name) {
     if (imagePath.isNotEmpty) {
-      widget.onSendTap.call(imagePath, replyMessage, MessageType.image);
+      widget.onSendTap.call(ImageMessage(
+        uri: imagePath,
+        id: const Uuid().v4(),
+        author: currentUser!,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        type: MessageType.image,
+        // Set Size
+        size: size ?? 0,
+        name: name ??
+            "${DateTime.now().millisecondsSinceEpoch}${currentUser!.id}-img",
+        repliedMessage: replyMessage,
+      ));
       _assignRepliedMessage();
     }
   }
@@ -312,11 +332,14 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
   void _onPressed() {
     if (_textEditingController.text.isNotEmpty &&
         !_textEditingController.text.startsWith('\n')) {
-      widget.onSendTap.call(
-        _textEditingController.text.trim(),
-        replyMessage,
-        MessageType.text,
-      );
+      widget.onSendTap.call(TextMessage(
+        author: currentUser!,
+        id: const Uuid().v4(),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        type: MessageType.text,
+        text: _textEditingController.text.trim(),
+        repliedMessage: replyMessage,
+      ));
       _assignRepliedMessage();
       _textEditingController.clear();
     }

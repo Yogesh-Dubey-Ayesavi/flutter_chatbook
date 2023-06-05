@@ -9,22 +9,22 @@ part of 'database_service.dart';
 UpdatedReceipt _$UpdatedReceiptFromJson(Map<String, dynamic> json) =>
     UpdatedReceipt(
       id: json['id'] as String,
-      newStatus: $enumDecode(_$MessageStatusEnumMap, json['newStatus']),
+      newStatus: $enumDecode(_$DeliveryStatusEnumMap, json['newStatus']),
     );
 
 Map<String, dynamic> _$UpdatedReceiptToJson(UpdatedReceipt instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'newStatus': _$MessageStatusEnumMap[instance.newStatus]!,
+      'newStatus': _$DeliveryStatusEnumMap[instance.newStatus]!,
     };
 
-const _$MessageStatusEnumMap = {
-  MessageStatus.error: 'error',
-  MessageStatus.sending: 'sending',
-  MessageStatus.sent: 'sent',
-  MessageStatus.read: 'read',
-  MessageStatus.delivered: 'delivered',
-  MessageStatus.undelivered: 'undelivered',
-  MessageStatus.pending: 'pending',
-  MessageStatus.custom: 'custom',
+const _$DeliveryStatusEnumMap = {
+  DeliveryStatus.error: 'error',
+  DeliveryStatus.sending: 'sending',
+  DeliveryStatus.sent: 'sent',
+  DeliveryStatus.read: 'read',
+  DeliveryStatus.delivered: 'delivered',
+  DeliveryStatus.undelivered: 'undelivered',
+  DeliveryStatus.pending: 'pending',
+  DeliveryStatus.custom: 'custom',
 };

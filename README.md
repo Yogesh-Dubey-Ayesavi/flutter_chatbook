@@ -1,7 +1,7 @@
 ![Banner](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chat_ui/main/preview/banner.png)
 
-# ChatView
- [![chatview](https://img.shields.io/pub/v/chatview?label=chatview)](https://pub.dev/packages/chatview)
+# ChatBook
+ [![flutter_chatbook](https://img.shields.io/pub/v/flutter_chatbook?label=flutter_chatbook)](https://pub.dev/packages/flutter_chatbook)
 
 A Flutter package that allows you to integrate Chat View with highly customization options such as one on one
 chat, group chat, message reactions, reply messages, link preview and configurations for overall view.
@@ -11,7 +11,7 @@ visit [Chat View Example](https://chat-view-8f1b5.web.app/#/).
 
 ## Preview
 
-![The example app running in iOS](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chat_ui/main/preview/chatview.gif)
+![The example app running in iOS](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chat_ui/main/preview/flutter_chatbook.gif)
 
 ## Installing   
 
@@ -19,13 +19,13 @@ visit [Chat View Example](https://chat-view-8f1b5.web.app/#/).
 
 ```dart
 dependencies:
-  chatview: <latest-version>
+  flutter_chatbook: <latest-version>
 ```
-*Get the latest version in the 'Installing' tab on [pub.dev](https://pub.dev/packages/chatview)*
+*Get the latest version in the 'Installing' tab on [pub.dev](https://pub.dev/packages/flutter_chatbook)*
 
 2.  Import the package
 ```dart
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 ```
 3. Adding a chat controller.
 ```dart
@@ -36,13 +36,13 @@ final chatController = ChatController(
 );
 ```
 
-4. Adding a `ChatView` widget.
+4. Adding a `ChatBook` widget.
 ```dart
-ChatView(
+ChatBook(
   currentUser: ChatUser(id: '1', name: 'Flutter'),
   chatController: chatController,
   onSendTap: onSendTap,
-  chatViewState: ChatViewState.hasMessages, // Add this state once data is available.
+  chatBookState: ChatBookState.hasMessages, // Add this state once data is available.
 )
 ```
 
@@ -134,7 +134,7 @@ Note: you can evaluate message type from `messageType` parameter, based on that 
 
 1. Enable and disable specific features with `FeatureActiveConfig`.
 ```dart
-ChatView(
+ChatBook(
   ...
   featureActiveConfig: FeatureActiveConfig(
     enableSwipeToReply: true,
@@ -144,11 +144,11 @@ ChatView(
 )
 ```
 
-2. Adding an appbar with `ChatViewAppBar`.
+2. Adding an appbar with `ChatBookAppBar`.
 ```dart
-ChatView(
+ChatBook(
   ...
-  appBar: ChatViewAppBar(
+  appBar: ChatBookAppBar(
     profilePicture: profileImage,
     chatTitle: "Simform",
     userStatus: "online",
@@ -162,7 +162,7 @@ ChatView(
 
 3. Adding a message list configuration with `ChatBackgroundConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   chatBackgroundConfig: ChatBackgroundConfiguration(
     backgroundColor: Colors.white,
@@ -174,7 +174,7 @@ ChatView(
 
 4. Adding a send message configuration with `SendMessageConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   sendMessageConfig: SendMessageConfiguration(
     replyMessageColor: Colors.grey,
@@ -188,7 +188,7 @@ ChatView(
 
 5. Adding a chat bubble configuration with `ChatBubbleConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   chatBubbleConfig: ChatBubbleConfiguration(
     onDoubleTap: (){
@@ -217,7 +217,7 @@ ChatView(
 
 6. Adding swipe to reply configuration with `SwipeToReplyConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   swipeToReplyConfig: SwipeToReplyConfiguration(
     onLeftSwipe: (message, sendBy){
@@ -233,7 +233,7 @@ ChatView(
 
 7. Adding messages configuration with `MessageConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   messageConfig: MessageConfiguration(
     messageReactionConfig: MessageReactionConfiguration(),      // Emoji reaction configuration for single message 
@@ -254,7 +254,7 @@ ChatView(
 
 8. Adding reaction pop-up configuration with `ReactionPopupConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   reactionPopupConfig: ReactionPopupConfiguration(
     backgroundColor: Colors.white,
@@ -273,7 +273,7 @@ ChatView(
 
 9. Adding reply pop-up configuration with `ReplyPopupConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   replyPopupConfig: ReplyPopupConfiguration(
     backgroundColor: Colors.white,
@@ -296,7 +296,7 @@ ChatView(
 
 10. Adding replied message configuration with `RepliedMessageConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
    ...
    repliedMessageConfig: RepliedMessageConfiguration(
      backgroundColor: Colors.blue,
@@ -309,7 +309,7 @@ ChatView(
 
 11. For customizing typing indicators use `typeIndicatorConfig` with `TypeIndicatorConfig`.
 ```dart
-ChatView(
+ChatBook(
   ...
 
   typeIndicatorConfig: TypeIndicatorConfiguration(
@@ -331,7 +331,7 @@ _chatContoller.setTypingIndicator = false; // for hiding indicator
 
 13. Adding linkpreview configuration with `LinkPreviewConfiguration` class.
 ```dart
-ChatView(
+ChatBook(
   ...
   chatBubbleConfig: ChatBubbleConfiguration(
     linkPreviewConfig: LinkPreviewConfiguration(
@@ -358,7 +358,7 @@ ChatView(
 
 13. Adding pagination.
 ```dart
-ChatView(
+ChatBook(
   ...
   isLastPage: false,
   featureActiveConfig: FeatureActiveConfig(
@@ -371,7 +371,7 @@ ChatView(
 
 14. Add image picker icon configuration.
 ```dart
-ChatView(
+ChatBook(
   ...
   sendMessageConfig: SendMessageConfiguration(
     imagePickerIconsConfig: ImagePickerIconsConfiguration(
@@ -383,12 +383,12 @@ ChatView(
 )
 ```
 
-15. Add `ChatViewState` customisations.
+15. Add `ChatBookState` customisations.
 ```dart
-ChatView(
+ChatBook(
   ...
-  chatViewStateConfig: ChatViewStateConfiguration(
-    loadingWidgetConfig: ChatViewStateWidgetConfiguration(
+  chatBookStateConfig: ChatBookStateConfiguration(
+    loadingWidgetConfig: ChatBookStateWidgetConfiguration(
       loadingIndicatorColor: Colors.pink,
     ),
     onReloadButtonTap: () {},
@@ -399,7 +399,7 @@ ChatView(
 
 16. Setting auto scroll and highlight config with `RepliedMsgAutoScrollConfig` class.
 ```dart
-ChatView(
+ChatBook(
     ...
     repliedMsgAutoScrollConfig: RepliedMsgAutoScrollConfig(
       enableHighlightRepliedMsg: true,
@@ -413,7 +413,7 @@ ChatView(
 17.  Callback when a user starts/stops typing in `TextFieldConfiguration`
     
 ```dart
-ChatView(
+ChatBook(
     ...
       sendMessageConfig: SendMessageConfiguration(
        
@@ -438,7 +438,7 @@ ChatView(
 18.  Passing customReceipts builder or handling stuffs related receipts see `ReceiptsWidgetConfig` in  outgoingChatBubbleConfig.
     
 ```dart
-ChatView(
+ChatBook(
    ...
       featureActiveConfig: const FeatureActiveConfig(
             /// Controls the visibility of message seen ago receipts default is true
@@ -473,7 +473,7 @@ ChatView(
 
 ## How to use
 
-Check out [blog](https://medium.com/simform-engineering/chatview-a-cutting-edge-chat-ui-solution-7367b1f9d772) for better understanding and basic implementation. 
+Check out [blog](https://medium.com/simform-engineering/flutter_chatbook-a-cutting-edge-chat-ui-solution-7367b1f9d772) for better understanding and basic implementation. 
 
 Also, for whole example, check out the **example** app in the [example](https://github.com/SimformSolutionsPvtLtd/flutter_chatview/tree/main/example) directory or the 'Example' tab on pub.dartlang.org for a more complete example.
 

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../chatview.dart';
+import '../../../flutter_chatbook.dart';
 
 class CupertinoMenuConfiguration {
   final List<Widget> Function(Message message)? actionsBuilder;

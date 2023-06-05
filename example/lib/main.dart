@@ -1,21 +1,30 @@
-import 'package:chatview/chatview.dart';
+import 'dart:math';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:example/create_user_screen.dart';
 import 'package:example/service_locator.dart';
 import 'package:example/users_screen.dart';
-import 'package:uuid/uuid.dart';
+import 'package:giphy_message/models/giphy_message.dart';
 import 'theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:giphy_message/giphy_message.dart';
+
+String apiKey = 'WdUCeA3nQDXNvVmFfK9ZBZJ3QGxaSQnZ';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   const user = ChatUser(id: '7489016865', firstName: 'Flutter');
-  serviceLocator.registerSingleton<ChatViewController>(
-      ChatViewController.getInstance(user,
-          chatViewExtension: ChatViewExtension(
-              serviceExtension: ServiceExtension<SqfliteDataBaseService>(
-                  dataManager: SqfliteDataBaseService(currentUser: user)))));
+
+  customMessageConstructors['giphy'] = (json) => GiphyMessage.fromJson(json);
+
+  ChatBookController.getInstance(user,
+      chatBookExtension: ChatBookExtension(
+          widgetsExtension:
+              WidgetsExtension(messageTypes: [GiphyMessageSupport(apiKey)]),
+          serviceExtension: ServiceExtension<SqfliteDataBaseService>(
+              dataManager: SqfliteDataBaseService(currentUser: user))));
   runApp(const Example());
 }
 
@@ -68,8 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   SqfLiteChatRoomDataBaseService? get _chatroomService => serviceLocator
-      .get<ChatViewController>()
-      .chatViewExtension
+      .get<ChatBookController>()
+      .chatBookExtension
       ?.serviceExtension
       ?.dataManager
       ?.roomManager as SqfLiteChatRoomDataBaseService;
@@ -202,37 +211,33 @@ class _ChatScreenState extends State<ChatScreen> {
     init();
   }
 
+  final chatUsers = [const ChatUser(id: '7489016865', firstName: 'Flutter')];
+
   void init() async {
     _chatController = ChatController(
-      chatViewController: _chatViewController,
+      chatBookController: _chatBookController,
       initialMessageList: widget.chatService.messages,
       chatService: widget.chatService,
       scrollController: AutoScrollController(),
-      chatUsers: [
-        const ChatUser(
-          id: '2',
-          firstName: 'Simform',
-        ),
-        const ChatUser(
-          id: '3',
-          firstName: 'Jhon',
-        ),
-        const ChatUser(
-          id: '4',
-          firstName: 'Mike',
-        ),
-        const ChatUser(
-          id: '5',
-          firstName: 'Rich',
-        ),
-      ],
+      chatUsers: chatUsers,
     );
 
     // _chatController.loadMoreData(widget.chatService.messages);
+    final result = await _userProfileService?.fetchUsers();
+    if (result != null) {
+      chatUsers.addAll(result);
+    }
   }
 
-  ChatViewController get _chatViewController =>
-      serviceLocator.get<ChatViewController>();
+  ChatBookController get _chatBookController =>
+      serviceLocator.get<ChatBookController>();
+
+  SqfliteUserProfileService? get _userProfileService => serviceLocator
+      .get<ChatBookController>()
+      .chatBookExtension
+      ?.serviceExtension
+      ?.dataManager
+      ?.profileManager as SqfliteUserProfileService;
 
   late final ChatController _chatController;
 
@@ -243,21 +248,22 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ChatView(
+      body: ChatBook(
         isCupertinoApp: false,
-        currentUser: _chatViewController.currentUser,
+        currentUser: _chatBookController.currentUser,
         chatController: _chatController,
         onSendTap: _onSendTap,
         featureActiveConfig: const FeatureActiveConfig(
             lastSeenAgoBuilderVisibility: true,
             enablePagination: true,
             enableSwipeToSeeTime: false,
+            enableSwipeToReply: true,
             selectMultipleMessages: true,
             enableReplySnackBar: false,
             receiptsBuilderVisibility: true),
-        chatViewState: ChatViewState.hasMessages,
-        chatViewStateConfig: ChatViewStateConfiguration(
-          loadingWidgetConfig: ChatViewStateWidgetConfiguration(
+        chatBookState: ChatBookState.hasMessages,
+        chatBookStateConfig: ChatBookStateConfiguration(
+          loadingWidgetConfig: ChatBookStateWidgetConfiguration(
             loadingIndicatorColor: theme.outgoingChatBubbleColor,
           ),
           onReloadButtonTap: () {},
@@ -266,7 +272,7 @@ class _ChatScreenState extends State<ChatScreen> {
           flashingCircleBrightColor: theme.flashingCircleBrightColor,
           flashingCircleDarkColor: theme.flashingCircleDarkColor,
         ),
-        appBar: ChatViewAppBar(
+        appBar: ChatBookAppBar(
           messageActionsBuilder: (message) {
             return [
               IconButton(
@@ -373,8 +379,7 @@ class _ChatScreenState extends State<ChatScreen> {
               titleStyle: theme.outgoingChatLinkTitleStyle,
             ),
             receiptsWidgetConfig: const ReceiptsWidgetConfig(
-                receiptsBubblePreference: ReceiptsBubblePreference.inside,
-                showReceiptsIn: ShowReceiptsIn.all),
+                showReceiptsIn: ShowReceiptsIn.allInside),
             color: theme.outgoingChatBubbleColor,
           ),
           inComingChatBubbleConfig: ChatBubble(
@@ -466,69 +471,21 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _onSendTap(
-      String message, Message? replyMessage, MessageType messageType,
-      {Duration? duration}) async {
-    final id = const Uuid().v4();
-    if (messageType == MessageType.text) {
-      final txtMessage = TextMessage(
-          author: _chatViewController.currentUser,
-          id: id,
-          createdAt: DateTime.now().millisecondsSinceEpoch,
-          repliedMessage: replyMessage,
-          roomId: widget.chatService.room.id,
-          text: message);
-      _chatController.addMessage(txtMessage);
-    } else if (messageType == MessageType.image) {
-      final img = ImageMessage(
-          author: _chatViewController.currentUser,
-          name: DateTime.now().toIso8601String(),
-          size: 465,
-          roomId: widget.chatService.room.id,
-          id: id,
-          createdAt: DateTime.now().millisecondsSinceEpoch,
-          repliedMessage: replyMessage,
-          uri: message);
-      _chatController.addMessage(img);
-    } else if (messageType == MessageType.voice) {
-      final voice = AudioPathMessage(
-        message,
-        author: _chatViewController.currentUser,
-        duration: duration?.inMilliseconds ?? 0,
-        roomId: widget.chatService.room.id,
-        name: "Audio1",
-        size: duration?.inMilliseconds ?? 0,
-        id: id,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        repliedMessage: replyMessage,
-      );
-      _chatController.addMessage(voice);
+  void _onSendTap(Message message) async {
+    final msg = message.copyWith(
+        author: chatUsers[Random().nextInt(chatUsers.length)],
+        roomId: widget.chatService.room.id);
 
-      Future.delayed(const Duration(milliseconds: 300), () {
-        final msg =
-            _chatController.initialMessageList.last.value as AudioPathMessage;
-        _chatController.initialMessageList.last.value = AudioPathMessage(
-            msg.uri,
-            author: msg.author,
-            createdAt: msg.createdAt,
-            id: msg.id,
-            name: msg.name,
-            status: MessageStatus.undelivered,
-            size: msg.size,
-            duration: msg.duration);
-        debugPrint((msg.hashCode ==
-                _chatController.initialMessageList.last.value.hashCode)
-            .toString());
-      });
-    }
-    if (messageType != MessageType.voice) {
-      Future.delayed(const Duration(milliseconds: 300), () async {
-        final newMessage = _chatController.initialMessageList.first.value
-            .copyWith(status: MessageStatus.undelivered);
-        _chatController.initialMessageList.first.value = newMessage;
-        await widget.chatService.updateMessage(newMessage);
-      });
-    }
+    _chatController.addMessage(msg);
+
+    final amsg = CustomMessage.fromJson(msg.toJson());
+    print(amsg.runtimeType);
+    Future.delayed(const Duration(milliseconds: 300), () async {
+      final newMessage = _chatController.initialMessageList.first.value
+          .copyWith(status: DeliveryStatus.read);
+      _chatController.initialMessageList.first.value = newMessage;
+      await widget.chatService.updateMessage(newMessage);
+    });
   }
 
   void _onThemeIconTap() {

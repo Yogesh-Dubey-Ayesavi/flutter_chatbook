@@ -1,4 +1,4 @@
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 class ReactionsBottomSheet {
   Future<void> show({
@@ -48,36 +48,39 @@ class ReactionsBottomSheet {
                           ],
                           borderRadius: BorderRadius.circular(10),
                         ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: reactionsBottomSheetConfig
-                                    ?.profileCircleRadius ??
-                                16,
-                            backgroundImage: NetworkImage(
-                              reactedUser.imageUrl ?? profileImage,
+                child: GestureDetector(
+                
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: reactionsBottomSheetConfig
+                                      ?.profileCircleRadius ??
+                                  16,
+                              backgroundImage: NetworkImage(
+                                reactedUser.imageUrl ?? profileImage,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            reactedUser.firstName ?? "",
-                            style: reactionsBottomSheetConfig
-                                ?.reactedUserTextStyle,
-                          ),
-                        ],
+                            const SizedBox(width: 12),
+                            Text(
+                              reactedUser.firstName ?? "",
+                              style: reactionsBottomSheetConfig
+                                  ?.reactedUserTextStyle,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Text(
-                      reaction.reactions[index],
-                      style: TextStyle(
-                        fontSize:
-                            reactionsBottomSheetConfig?.reactionSize ?? 14,
-                      ),
-                    )
-                  ],
+                      Text(
+                        reaction.reactions[index],
+                        style: TextStyle(
+                          fontSize:
+                              reactionsBottomSheetConfig?.reactionSize ?? 14,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               );
             },

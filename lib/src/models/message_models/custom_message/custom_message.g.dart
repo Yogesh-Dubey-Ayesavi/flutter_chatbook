@@ -8,6 +8,7 @@ part of 'custom_message.dart';
 
 CustomMessage _$CustomMessageFromJson(Map<String, dynamic> json) =>
     CustomMessage(
+      customType: json['customType'] as String,
       author: ChatUser.fromJson(json['author'] as Map<String, dynamic>),
       createdAt: json['createdAt'] as int,
       reaction: json['reaction'] == null
@@ -21,8 +22,7 @@ CustomMessage _$CustomMessageFromJson(Map<String, dynamic> json) =>
           : Message.fromJson(json['repliedMessage'] as Map<String, dynamic>),
       roomId: json['roomId'] as String?,
       showStatus: json['showStatus'] as bool?,
-      status: $enumDecodeNullable(_$MessageStatusEnumMap, json['status']),
-      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
+      status: $enumDecodeNullable(_$DeliveryStatusEnumMap, json['status']),
       updatedAt: json['updatedAt'] as int?,
     );
 
@@ -36,21 +36,22 @@ Map<String, dynamic> _$CustomMessageToJson(CustomMessage instance) =>
       'repliedMessage': instance.repliedMessage?.toJson(),
       'roomId': instance.roomId,
       'showStatus': instance.showStatus,
-      'status': _$MessageStatusEnumMap[instance.status]!,
+      'customType':instance.customType,
+      'status': _$DeliveryStatusEnumMap[instance.status]!,
       'type': _$MessageTypeEnumMap[instance.type]!,
       'updatedAt': instance.updatedAt,
       'reaction': instance.reaction?.toJson(),
     };
 
-const _$MessageStatusEnumMap = {
-  MessageStatus.error: 'error',
-  MessageStatus.sending: 'sending',
-  MessageStatus.sent: 'sent',
-  MessageStatus.read: 'read',
-  MessageStatus.delivered: 'delivered',
-  MessageStatus.undelivered: 'undelivered',
-  MessageStatus.pending: 'pending',
-  MessageStatus.custom: 'custom',
+const _$DeliveryStatusEnumMap = {
+  DeliveryStatus.error: 'error',
+  DeliveryStatus.sending: 'sending',
+  DeliveryStatus.sent: 'sent',
+  DeliveryStatus.read: 'read',
+  DeliveryStatus.delivered: 'delivered',
+  DeliveryStatus.undelivered: 'undelivered',
+  DeliveryStatus.pending: 'pending',
+  DeliveryStatus.custom: 'custom',
 };
 
 const _$MessageTypeEnumMap = {

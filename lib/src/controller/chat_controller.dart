@@ -1,27 +1,6 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 /// Through ChatController User must be able to access room's underlying
 /// backend and database services.
@@ -33,9 +12,9 @@ class ChatController {
   /// scroll positions.
   AutoScrollController scrollController;
 
-  /// [ChatViewController] controls whole chat infrastructure including
-  /// managing rooms, databases and networks see [ChatViewController].
-  final ChatViewController? chatViewController;
+  /// [ChatBookController] controls whole chat infrastructure including
+  /// managing rooms, databases and networks see [ChatBookController].
+  final ChatBookController? chatBookController;
 
   /// Allow user to show typing indicator defaults to false.
   final ValueNotifier<bool> _showTypingIndicator = ValueNotifier(false);
@@ -74,7 +53,7 @@ class ChatController {
     required this.scrollController,
     required this.chatUsers,
     this.chatService,
-    this.chatViewController,
+    this.chatBookController,
   });
 
   /// Represents message stream of chat

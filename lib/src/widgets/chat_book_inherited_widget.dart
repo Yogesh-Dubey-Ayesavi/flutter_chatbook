@@ -1,11 +1,11 @@
-part of '../../chatview.dart';
+part of '../../flutter_chatbook.dart';
 
 /// This widget for alternative of excessive amount of passing arguments
 /// over widgets.
 ///
 @immutable
-class ChatViewInheritedWidget extends InheritedWidget {
-  const ChatViewInheritedWidget({
+class ChatBookInheritedWidget extends InheritedWidget {
+  const ChatBookInheritedWidget({
     Key? key,
     required Widget child,
     required this.featureActiveConfig,
@@ -23,10 +23,10 @@ class ChatViewInheritedWidget extends InheritedWidget {
 
   /// for appBar
 
-  static ChatViewInheritedWidget? of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<ChatViewInheritedWidget>();
+  static ChatBookInheritedWidget? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ChatBookInheritedWidget>();
 
   @override
-  bool updateShouldNotify(covariant ChatViewInheritedWidget oldWidget) =>
+  bool updateShouldNotify(covariant ChatBookInheritedWidget oldWidget) =>
       oldWidget.featureActiveConfig != featureActiveConfig;
 }

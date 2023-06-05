@@ -1,11 +1,12 @@
-import 'package:chatview/packages/format/format.dart';
-import 'package:chatview/src/extensions/extension_apis/default%20plugins/sql_queries.dart';
+import '../../../../../../packages/format/format.dart';
+import 'package:flutter_chatbook/src/extensions/extension_apis/default%20plugins/sqflite_database_service/sql_queries.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
-import '../../../../chatview.dart';
+import '../../../../../flutter_chatbook.dart';
 
 class SqfliteChatDataBaseService extends ChatDataBaseService {
+  
   SqfliteChatDataBaseService(Room room, {this.limit = 20}) : super(room);
 
   int _offset = 0;
@@ -112,7 +113,7 @@ class SqfliteChatDataBaseService extends ChatDataBaseService {
 
   @override
   int get unreadMessage => messages
-      .where((x) => x.value.status == MessageStatus.delivered)
+      .where((x) => x.value.status == DeliveryStatus.delivered)
       .toList()
       .length;
 
@@ -158,7 +159,7 @@ class SqfliteChatDataBaseService extends ChatDataBaseService {
   Future<List<Message>> unreadMessages() async {
     List<Message> responseList = [];
     responseList.addAll((messages.where(
-            (element) => element.value.status == MessageStatus.delivered))
+            (element) => element.value.status == DeliveryStatus.delivered))
         .map((e) => e.value));
     await _database.transaction((txn) async {
       final response = (await txn.query(_tableName,

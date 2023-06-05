@@ -1,4 +1,4 @@
-import 'package:chatview/src/models/models.dart';
+import 'package:flutter_chatbook/src/models/models.dart';
 
 abstract class BackendManager {
   void sendMessage(Message message);

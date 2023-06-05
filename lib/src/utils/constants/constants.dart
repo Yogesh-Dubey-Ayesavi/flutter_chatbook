@@ -1,30 +1,8 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
-import '../../../chatview.dart';
+import '../../../flutter_chatbook.dart';
 
 const String enUS = "en_US";
 const String emojiRegExpression =
@@ -53,36 +31,28 @@ const double maxWidth = 350;
 const int opacity = 18;
 const double verticalPadding = 4.0;
 const double leftPadding2 = 5;
-const double horizontalPadding = 6;
+const double horizontalPadding = 10;
 const double replyBorderRadius1 = 30;
 const double replyBorderRadius2 = 18;
 const double leftPadding3 = 12;
 const double textFieldBorderRadius = 27;
 
-applicationDateFormatter(DateTime inputTime) {
-  if (DateTime.now().difference(inputTime).inDays <= 3) {
-    return timeago.format(inputTime);
-  } else {
-    return DateFormat('dd MMM yyyy').format(inputTime);
-  }
-}
-
-/// Default widget that appears on receipts at [MessageStatus.pending] when a message
+/// Default widget that appears on receipts at [DeliveryStatus.pending] when a message
 /// is not sent or at the pending state. A custom implementation can have different
 /// widgets for different states.
 /// Right now it is implemented to appear right next to the outgoing bubble.
-Widget sendMessageAnimationBuilder(MessageStatus status) {
+Widget sendMessageAnimationBuilder(DeliveryStatus status) {
   return SendingMessageAnimatingWidget(status);
 }
 
 /// Default builder when the message has got seen as of now
 /// is visible at the bottom of the chat bubble
 Widget lastSeenAgoBuilder(Message message, String formattedDate) {
-  return Padding(
-    padding: const EdgeInsets.all(2),
+  return const Padding(
+    padding: EdgeInsets.all(2),
     child: Text(
-      'Seen ${applicationDateFormatter(DateTime.fromMillisecondsSinceEpoch(message.createdAt))}',
-      style: const TextStyle(color: Colors.grey, fontSize: 12),
+      'Seen ',
+      style: TextStyle(color: Colors.grey, fontSize: 12),
     ),
   );
 }
@@ -99,3 +69,8 @@ bool sameDay(int firstStamp, int? secondStamp) {
 }
 
 final serviceLocator = GetIt.instance;
+
+ChatBookController? getRegisteredChatBookController() =>
+    serviceLocator.isRegistered<ChatBookController>()
+        ? serviceLocator.get<ChatBookController>()
+        : null;

@@ -48,7 +48,7 @@ abstract class AudioMessage extends Message {
     String? roomId,
     bool? showStatus,
     required num size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     MessageType? type,
     required int duration,
     int? updatedAt,
@@ -90,7 +90,7 @@ abstract class AudioMessage extends Message {
     String? roomId,
     bool? showStatus,
     required num size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     MessageType? type,
     int? updatedAt,
     required int duration,
@@ -130,7 +130,7 @@ abstract class AudioMessage extends Message {
     required int duration,
     String? roomId,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
   }) =>
       AudioPathMessage(
@@ -184,7 +184,7 @@ abstract class AudioMessage extends Message {
     String? roomId,
     bool? showStatus,
     num? size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
     String? uri,
   });
@@ -210,7 +210,7 @@ class AudioPathMessage extends AudioMessage {
     String? roomId,
     bool? showStatus,
     required num size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     MessageType? type,
     int? updatedAt,
     required int duration,
@@ -266,7 +266,7 @@ class AudioPathMessage extends AudioMessage {
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,
         size: size ?? this.size,
-        status: status == _Unset ? this.status : status as MessageStatus?,
+        status: status == _Unset ? this.status : status as DeliveryStatus?,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
       );
 
@@ -312,7 +312,7 @@ class AudioFileMessage extends AudioMessage {
     String? roomId,
     bool? showStatus,
     required num size,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
     required int duration,
   }) : super(
@@ -365,7 +365,7 @@ class AudioFileMessage extends AudioMessage {
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,
-        status: status == _Unset ? this.status : status as MessageStatus?,
+        status: status == _Unset ? this.status : status as DeliveryStatus?,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
         duration: duration ?? this.duration,
         size: size ?? this.size,

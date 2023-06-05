@@ -1,4 +1,4 @@
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 import 'partial_text.dart';
@@ -23,7 +23,7 @@ abstract class TextMessage extends Message {
     required this.text,
     MessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.text);
+  }) : super(type: MessageType.text);
 
   factory TextMessage({
     required ChatUser author,
@@ -35,7 +35,7 @@ abstract class TextMessage extends Message {
     Message? repliedMessage,
     String? roomId,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     required String text,
     MessageType? type,
     int? updatedAt,
@@ -54,7 +54,7 @@ abstract class TextMessage extends Message {
     String? remoteId,
     String? roomId,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
   }) =>
       _TextMessage(
@@ -101,7 +101,7 @@ abstract class TextMessage extends Message {
     String? roomId,
     Reaction? reaction,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     String? text,
     int? updatedAt,
   });
@@ -140,7 +140,7 @@ class _TextMessage extends TextMessage {
     String? roomId,
     Reaction? reaction,
     bool? showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     String? text,
     int? updatedAt,
   }) =>

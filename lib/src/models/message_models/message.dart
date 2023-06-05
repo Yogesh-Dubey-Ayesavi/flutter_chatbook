@@ -1,11 +1,11 @@
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 /// All possible message types.
 
 /// All possible statuses message can have.
-enum MessageStatus {
+enum DeliveryStatus {
   error,
   sending,
   sent,
@@ -30,13 +30,13 @@ abstract class Message extends Equatable {
     this.repliedMessage,
     this.roomId,
     this.showStatus,
-    MessageStatus? status,
+    DeliveryStatus? status,
     required this.type,
     this.updatedAt,
     this.reaction,
   }) {
     _key = key ?? GlobalKey();
-    this.status = status ?? MessageStatus.pending;
+    this.status = status ?? DeliveryStatus.pending;
   }
 
   /// Creates a particular message from a map (decoded JSON).
@@ -49,7 +49,7 @@ abstract class Message extends Equatable {
 
     switch (type) {
       case MessageType.custom:
-        return CustomMessage.fromJson(json);
+        return CustomMessage.fromJson( json);
       case MessageType.voice:
         return AudioMessage.fromJson(json);
       case MessageType.image:
@@ -92,8 +92,8 @@ abstract class Message extends Equatable {
   /// Show status or not.
   final bool? showStatus;
 
-  /// Message [MessageStatus].
-  late final MessageStatus status;
+  /// Message [DeliveryStatus].
+  late final DeliveryStatus status;
 
   /// [MessageType].
   final MessageType type;
@@ -117,7 +117,7 @@ abstract class Message extends Equatable {
     String? roomId,
     bool? showStatus,
     Reaction? reaction,
-    MessageStatus? status,
+    DeliveryStatus? status,
     int? updatedAt,
   });
 

@@ -19,7 +19,7 @@
 //  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  * SOFTWARE.
 //  */
-// import 'package:chatview/chatview.dart';
+// import 'package:flutter_chatbook/flutter_chatbook.dart';
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/foundation.dart';
 
@@ -48,8 +48,8 @@
 //   /// Provides message type.
 //   final MessageType messageType;
 
-//   /// MessageStatus of the message.
-//   final ValueNotifier<MessageStatus> _status;
+//   /// DeliveryStatus of the message.
+//   final ValueNotifier<DeliveryStatus> _status;
 
 //   /// Provides max duration for recorded voice message.
 //   Duration? voiceMessageDuration;
@@ -63,7 +63,7 @@
 //     Reaction? reaction,
 //     this.messageType = MessageType.text,
 //     this.voiceMessageDuration,
-//     MessageStatus status = MessageStatus.pending,
+//     DeliveryStatus status = DeliveryStatus.pending,
 //   })  : reaction = reaction ?? Reaction(reactions: [], reactedUserIds: []),
 //         key = GlobalKey(),
 //         _status = ValueNotifier(status),
@@ -75,19 +75,19 @@
 //           "Voice messages are only supported with android and ios platform",
 //         );
 
-//   /// curret messageStatus
-//   MessageStatus get status => _status.value;
+//   /// curret DeliveryStatus
+//   DeliveryStatus get status => _status.value;
 
-//   /// For [MessageStatus] ValueNotfier which is used to for rebuilds
+//   /// For [DeliveryStatus] ValueNotfier which is used to for rebuilds
 //   /// when state changes.
 //   /// Using ValueNotfier to avoid usage of setState((){}) in order
 //   /// rerender messages with new receipts.
-//   ValueNotifier<MessageStatus> get statusNotifier => _status;
+//   ValueNotifier<DeliveryStatus> get statusNotifier => _status;
 
 //   /// This setter can be used to update message receipts, after which the configured
 //   /// builders will be updated.
-//   set setStatus(MessageStatus messageStatus) {
-//     _status.value = messageStatus;
+//   set setStatus(DeliveryStatus DeliveryStatus) {
+//     _status.value = DeliveryStatus;
 //   }
 
 //   factory Message.fromJson(Map<String, dynamic> json) => Message(

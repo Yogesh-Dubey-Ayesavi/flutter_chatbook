@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../../../chatview.dart';
+import '../../../../flutter_chatbook.dart';
 part 'database_service.g.dart';
 
 /// `DatabaseManager` adds capability to store and retrieve messages
-/// in [ChatView] directly, it holds
+/// in [ChatBook] directly, it holds
 /// 1. `ProfileManager`
 /// 2. `RoomManager`
 /// ### ProfileManager
@@ -59,7 +59,7 @@ class UpdatedReceipt {
   const UpdatedReceipt({required this.id, required this.newStatus});
 
   final String id;
-  final MessageStatus newStatus;
+  final DeliveryStatus newStatus;
 
   Map<String, dynamic> toJson() => _$UpdatedReceiptToJson(this);
 

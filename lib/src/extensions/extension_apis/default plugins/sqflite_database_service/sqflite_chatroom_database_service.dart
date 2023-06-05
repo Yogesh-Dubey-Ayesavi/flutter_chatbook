@@ -1,9 +1,9 @@
-import 'package:chatview/src/extensions/extension_apis/default%20plugins/sql_queries.dart';
-import 'package:chatview/src/utils/constants/constants.dart';
+import 'package:flutter_chatbook/src/extensions/extension_apis/default%20plugins/sqflite_database_service/sql_queries.dart';
+import 'package:flutter_chatbook/src/utils/constants/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
-import '../../../../chatview.dart';
+import '../../../../../flutter_chatbook.dart';
 
 class SqfLiteChatRoomDataBaseService extends RoomManager {
   late Database database;

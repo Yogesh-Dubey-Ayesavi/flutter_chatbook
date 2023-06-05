@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:chatview/chatview.dart';
-import 'package:chatview/packages/format/format.dart';
-import 'package:chatview/src/extensions/extension_apis/default%20plugins/sql_queries.dart';
-import 'package:chatview/src/utils/constants/constants.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
+import '../../../../../../packages/format/format.dart';
+import 'package:flutter_chatbook/src/extensions/extension_apis/default%20plugins/sqflite_database_service/sql_queries.dart';
+import 'package:flutter_chatbook/src/utils/constants/constants.dart';
 
 Map<String, dynamic> toDBJsonMessage(Message message, [bool isUpdate = false]) {
   final map = message.toJson();

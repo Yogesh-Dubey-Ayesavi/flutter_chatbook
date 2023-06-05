@@ -1,25 +1,4 @@
-/*
- * Copyright (c) 2022 Simform Solutions
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-import 'package:chatview/chatview.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../utils/constants/constants.dart';
@@ -96,6 +75,12 @@ extension MessageTypes on MessageType {
   bool get isCustom => this == MessageType.custom;
 }
 
+extension PriorityTool on ToolBarPriority {
+  bool get isHigh => this == ToolBarPriority.high;
+  bool get isLow => this == ToolBarPriority.low;
+  bool get isMedium => this == ToolBarPriority.medium;
+}
+
 /// Extension on ConnectionState for checking specific connection.
 extension ConnectionStates on ConnectionState {
   bool get isWaiting => this == ConnectionState.waiting;
@@ -104,16 +89,16 @@ extension ConnectionStates on ConnectionState {
 }
 
 /// Extension on nullable sting to return specific state string.
-extension ChatViewStateTitleExtension on String? {
-  String getChatViewStateTitle(ChatViewState state) {
+extension ChatBookStateTitleExtension on String? {
+  String getChatBookStateTitle(ChatBookState state) {
     switch (state) {
-      case ChatViewState.hasMessages:
+      case ChatBookState.hasMessages:
         return this ?? '';
-      case ChatViewState.noData:
+      case ChatBookState.noData:
         return this ?? 'No Messages';
-      case ChatViewState.loading:
+      case ChatBookState.loading:
         return this ?? '';
-      case ChatViewState.error:
+      case ChatBookState.error:
         return this ?? 'Something went wrong !!';
     }
   }
@@ -121,5 +106,5 @@ extension ChatViewStateTitleExtension on String? {
 
 /// Extension on State for accessing inherited widget.
 extension StatefulWidgetExtension on State {
-  ChatViewInheritedWidget? get provide => ChatViewInheritedWidget.of(context);
+  ChatBookInheritedWidget? get provide => ChatBookInheritedWidget.of(context);
 }

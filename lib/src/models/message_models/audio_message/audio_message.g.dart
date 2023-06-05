@@ -27,7 +27,7 @@ AudioMessage _$AudioMessageFromJson(Map<String, dynamic> json) =>
           : Message.fromJson(json['repliedMessage'] as Map<String, dynamic>),
       roomId: json['roomId'] as String?,
       showStatus: json['showStatus'] as bool?,
-      status: $enumDecodeNullable(_$MessageStatusEnumMap, json['status']),
+      status: $enumDecodeNullable(_$DeliveryStatusEnumMap, json['status']),
       type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
       updatedAt: json['updatedAt'] as int?,
     );
@@ -42,7 +42,7 @@ Map<String, dynamic> _$AudioMessageToJson(AudioMessage instance) =>
       'repliedMessage': instance.repliedMessage,
       'roomId': instance.roomId,
       'showStatus': instance.showStatus,
-      'status': _$MessageStatusEnumMap[instance.status]!,
+      'status': _$DeliveryStatusEnumMap[instance.status]!,
       'type': _$MessageTypeEnumMap[instance.type]!,
       'updatedAt': instance.updatedAt,
       'reaction': instance.reaction,
@@ -53,15 +53,15 @@ Map<String, dynamic> _$AudioMessageToJson(AudioMessage instance) =>
       'size': instance.size,
     };
 
-const _$MessageStatusEnumMap = {
-  MessageStatus.error: 'error',
-  MessageStatus.sending: 'sending',
-  MessageStatus.sent: 'sent',
-  MessageStatus.read: 'read',
-  MessageStatus.delivered: 'delivered',
-  MessageStatus.undelivered: 'undelivered',
-  MessageStatus.pending: 'pending',
-  MessageStatus.custom: 'custom',
+const _$DeliveryStatusEnumMap = {
+  DeliveryStatus.error: 'error',
+  DeliveryStatus.sending: 'sending',
+  DeliveryStatus.sent: 'sent',
+  DeliveryStatus.read: 'read',
+  DeliveryStatus.delivered: 'delivered',
+  DeliveryStatus.undelivered: 'undelivered',
+  DeliveryStatus.pending: 'pending',
+  DeliveryStatus.custom: 'custom',
 };
 
 const _$MessageTypeEnumMap = {

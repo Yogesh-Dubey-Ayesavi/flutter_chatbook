@@ -1,4 +1,4 @@
-part of '../../../chatview.dart';
+part of '../../../flutter_chatbook.dart';
 
 class GestureView extends StatefulWidget {
   const GestureView(
@@ -26,6 +26,15 @@ class _GestureViewState extends State<GestureView> {
 
   bool selectMultipleMessages = false;
 
+  NewMessageSupport? get extensionMessageSupport => (widget
+              .message.type.isCustom &&
+          (chatController?.chatBookController?.chatBookExtension
+                  ?.widgetsExtension?.messageTypes.isNotEmpty ??
+              false))
+      ? chatController!.chatBookController!.chatBookExtension!.widgetsExtension!
+          .getMessageSuport(widget.message)
+      : null;
+
   @override
   void initState() {
     super.initState();
@@ -49,10 +58,13 @@ class _GestureViewState extends State<GestureView> {
       if (!kIsWeb && (await Vibration.hasCustomVibrationsSupport() ?? false)) {
         Vibration.vibrate(duration: 10, amplitude: 10);
       }
-      widget.onLongPress(
-        details.globalPosition.dy - 120 - 64,
-        details.globalPosition.dx,
-      );
+
+      if ((extensionMessageSupport?.isReactable ?? true)) {
+        widget.onLongPress(
+          details.globalPosition.dy - 120 - 64,
+          details.globalPosition.dx,
+        );
+      }
     });
   }
 
@@ -73,6 +85,22 @@ class _GestureViewState extends State<GestureView> {
     chatController?.hideReactionPopUp();
   }
 
+  Widget _animatedScale(Widget child) {
+    return ValueListenableBuilder<bool>(
+        valueListenable: isOn,
+        builder: (context, value, ch) {
+          return AnimatedScale(
+              scale: value
+                  ? selectMultipleMessages
+                      ? .9325
+                      : .8
+                  : 1,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.decelerate,
+              child: child);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -84,35 +112,20 @@ class _GestureViewState extends State<GestureView> {
             (await Vibration.hasCustomVibrationsSupport() ?? false)) {
           Vibration.vibrate(duration: 10, amplitude: 10);
         }
-        if (widget.onDoubleTap != null) widget.onDoubleTap!(widget.message);
+        widget.onDoubleTap!.call(widget.message);
       },
       child: (() {
         if (widget.isLongPressEnable) {
-          return ValueListenableBuilder<bool>(
-              valueListenable: isOn,
-              builder: (context, value, ch) {
-                return AnimatedScale(
-                  scale: value
-                      ? selectMultipleMessages
-                          ? .9325
-                          : .8
-                      : 1,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.decelerate,
-                  child: ValueListenableBuilder<List<Message>>(
-                    valueListenable: chatController!.multipleMessageSelection,
-                    builder: (BuildContext context, value, Widget? child) {
-                      if (value.contains(widget.message) &&
-                          selectMultipleMessages) {
-                        return AnimatedContainer(
-                            duration: const Duration(milliseconds: 100),
-                            color: const Color(0xffff8aad),
-                            child: widget.child);
-                      }
-                      return widget.child;
-                    },
-                  ),
-                );
+          return ValueListenableBuilder<List<Message>>(
+              valueListenable: chatController!.multipleMessageSelection,
+              builder: (BuildContext context, value, Widget? child) {
+                if (value.contains(widget.message) && selectMultipleMessages) {
+                  return AnimatedContainer(
+                      duration: const Duration(milliseconds: 100),
+                      color: const Color(0xffff8aad),
+                      child: _animatedScale(widget.child));
+                }
+                return _animatedScale(widget.child);
               });
         } else {
           return widget.child;

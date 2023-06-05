@@ -1,29 +1,29 @@
-import 'package:chatview/src/values/typedefs.dart';
+import 'package:flutter_chatbook/src/values/typedefs.dart';
 import 'package:flutter/material.dart';
 
-class ChatViewStateConfiguration {
-  const ChatViewStateConfiguration({
-    this.errorWidgetConfig = const ChatViewStateWidgetConfiguration(),
-    this.noMessageWidgetConfig = const ChatViewStateWidgetConfiguration(),
-    this.loadingWidgetConfig = const ChatViewStateWidgetConfiguration(),
+class ChatBookStateConfiguration {
+  const ChatBookStateConfiguration({
+    this.errorWidgetConfig = const ChatBookStateWidgetConfiguration(),
+    this.noMessageWidgetConfig = const ChatBookStateWidgetConfiguration(),
+    this.loadingWidgetConfig = const ChatBookStateWidgetConfiguration(),
     this.onReloadButtonTap,
   });
 
   /// Provides configuration of error state's widget.
-  final ChatViewStateWidgetConfiguration? errorWidgetConfig;
+  final ChatBookStateWidgetConfiguration? errorWidgetConfig;
 
   /// Provides configuration of no message state's widget.
-  final ChatViewStateWidgetConfiguration? noMessageWidgetConfig;
+  final ChatBookStateWidgetConfiguration? noMessageWidgetConfig;
 
   /// Provides configuration of loading state's widget.
-  final ChatViewStateWidgetConfiguration? loadingWidgetConfig;
+  final ChatBookStateWidgetConfiguration? loadingWidgetConfig;
 
   /// Provides callback when user taps on reload button.
   final VoidCallBack? onReloadButtonTap;
 }
 
-class ChatViewStateWidgetConfiguration {
-  const ChatViewStateWidgetConfiguration({
+class ChatBookStateWidgetConfiguration {
+  const ChatBookStateWidgetConfiguration({
     this.widget,
     this.title,
     this.titleTextStyle,
