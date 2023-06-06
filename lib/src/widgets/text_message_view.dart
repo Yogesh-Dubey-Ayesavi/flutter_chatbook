@@ -6,6 +6,7 @@ class TextMessageView extends StatelessWidget {
     required this.isMessageBySender,
     required this.message,
     required this.isLastMessage,
+    this.messageConfiguration,
     this.chatBubbleMaxWidth,
     this.inComingChatBubbleConfig,
     this.outgoingChatBubbleConfig,
@@ -45,9 +46,10 @@ class TextMessageView extends StatelessWidget {
   /// Whether message is last or no for displaying receipts
   final bool isLastMessage;
 
-  final ValueNotifier<bool> _isExpanded = ValueNotifier(false);
+  /// For [ReadMoreConfig] to access read more configuration.
+  final MessageConfiguration? messageConfiguration;
 
-  final int _max = 400;
+  final ValueNotifier<bool> _isExpanded = ValueNotifier(false);
 
   Widget textWidget(TextTheme textTheme, String text) => ParsedText(
         selectable: false,
@@ -124,6 +126,7 @@ class TextMessageView extends StatelessWidget {
               color: highlightMessage ? highlightColor : _color,
               borderRadius: _borderRadius(textMessage),
             ),
+            //TODO: add functinality to opt for readmore
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -133,7 +136,10 @@ class TextMessageView extends StatelessWidget {
                         linkPreviewConfig: _linkPreviewConfig,
                         url: textMessage,
                       )
-                    : message.text.length <= _max
+                    : message.text.length <=
+                            (messageConfiguration?.readMoreConfig
+                                    ?.numOfWordsAfterEnableReadMore ??
+                                400)
                         ? textWidget(textTheme, message.text)
                         : ValueListenableBuilder<bool>(
                             valueListenable: _isExpanded,
@@ -145,16 +151,18 @@ class TextMessageView extends StatelessWidget {
                                   textWidget(
                                       textTheme,
                                       !_isExpanded.value
-                                          ? '${message.text.substring(0, _max)}...'
+                                          ? '${message.text.substring(0, messageConfiguration?.readMoreConfig?.numOfWordsAfterEnableReadMore ?? 400)}...'
                                           : message.text),
-                                  GestureDetector(
-                                      onTap: () => _isExpanded.value =
-                                          !_isExpanded.value,
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(5),
-                                          child: !_isExpanded.value
-                                              ? const Text("Read More")
-                                              : const Text("Read Less")))
+                                  messageConfiguration
+                                          ?.readMoreConfig?.readMoreWidget ??
+                                      GestureDetector(
+                                          onTap: () => _isExpanded.value =
+                                              !_isExpanded.value,
+                                          child: Padding(
+                                              padding: const EdgeInsets.all(5),
+                                              child: !_isExpanded.value
+                                                  ? const Text("Read More")
+                                                  : const Text("Read Less")))
                                 ],
                               );
                             },

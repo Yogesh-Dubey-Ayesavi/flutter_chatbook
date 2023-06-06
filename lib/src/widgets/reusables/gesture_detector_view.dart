@@ -32,7 +32,7 @@ class _GestureViewState extends State<GestureView> {
                   ?.widgetsExtension?.messageTypes.isNotEmpty ??
               false))
       ? chatController!.chatBookController!.chatBookExtension!.widgetsExtension!
-          .getMessageSuport(widget.message)
+          .getMessageSuport(widget.message as CustomMessage)
       : null;
 
   @override
@@ -51,7 +51,7 @@ class _GestureViewState extends State<GestureView> {
   }
 
   void _onLongPressStart(LongPressStartDetails details) {
-    chatController?._addMultipleMessage(widget.message);
+    chatController?._addMessageSelection(widget.message);
 
     isOn.value = true;
     Future.delayed(const Duration(milliseconds: 150), () async {
@@ -77,7 +77,7 @@ class _GestureViewState extends State<GestureView> {
   void _onTap() {
     if (selectMultipleMessages &&
         (chatController?.multipleMessageSelection.value.isNotEmpty ?? false)) {
-      chatController?._addMultipleMessage(widget.message);
+      chatController?._addMessageSelection(widget.message);
     }
     if (chatController?.showMessageActions.value == widget.message) {
       chatController?.hideReactionPopUp(messageActions: true);

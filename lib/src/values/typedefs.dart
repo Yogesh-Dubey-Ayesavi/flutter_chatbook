@@ -15,4 +15,5 @@ typedef StringsCallBack = void Function(String emoji, String messageId);
 typedef StringWithReturnWidget = Widget Function(String separator);
 typedef DragUpdateDetailsCallback = void Function(DragUpdateDetails);
 typedef MessageNotifierList = List<ValueNotifier<Message>>;
-typedef JsonConstructor = Map<String,CustomMessage Function(Map<String, dynamic> json)>;
+typedef JsonConstructor
+    = Map<String, CustomMessage Function(Map<String, dynamic> json)>;

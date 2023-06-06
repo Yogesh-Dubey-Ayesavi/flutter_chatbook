@@ -262,7 +262,7 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
   Widget get _extensionMessageReplyView {
     return widget
         .chatController.chatBookController!.chatBookExtension!.widgetsExtension!
-        .getMessageSuport(replyMessage!)
+        .getMessageSuport(replyMessage! as CustomMessage)
         .replyPreview
         .call(context, replyMessage!);
   }

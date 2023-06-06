@@ -1,3 +1,5 @@
+import 'message_configuration.dart';
+
 class FeatureActiveConfig {
   const FeatureActiveConfig({
     this.enableSwipeToReply = true,
@@ -13,6 +15,7 @@ class FeatureActiveConfig {
     this.lastSeenAgoBuilderVisibility = true,
     this.receiptsBuilderVisibility = true,
     this.selectMultipleMessages = true,
+    this.enableReadMoreOnMessages = true,
   });
 
   /// Used for enable/disable swipe to reply.
@@ -53,4 +56,8 @@ class FeatureActiveConfig {
 
   /// Controls to select multiple messages on tap after holding a message for a while.
   final bool selectMultipleMessages;
+
+  /// Controls whether to enable read more option when a message exceeds word limits
+  /// or the threshold provided by the user. To customise the threshold limits see [MessageConfiguration]
+  final bool enableReadMoreOnMessages;
 }

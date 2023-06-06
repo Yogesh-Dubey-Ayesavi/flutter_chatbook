@@ -5,10 +5,8 @@ class ChatListWidget extends StatefulWidget {
     Key? key,
     required this.chatController,
     required this.chatBackgroundConfig,
-    required this.showTypingIndicator,
     required this.assignReplyMessage,
     required this.replyMessage,
-    required this.focusNode,
     this.loadingWidget,
     this.reactionPopupConfig,
     this.messageConfig,
@@ -30,9 +28,6 @@ class ChatListWidget extends StatefulWidget {
 
   /// Provides widget for loading view while pagination is enabled.
   final Widget? loadingWidget;
-
-  /// Provides flag for turn on/off typing indicator.
-  final bool showTypingIndicator;
 
   /// Provides configuration for reaction pop up appearance.
   final ReactionPopupConfiguration? reactionPopupConfig;
@@ -74,8 +69,6 @@ class ChatListWidget extends StatefulWidget {
   /// bubble.
   final MessageCallBack assignReplyMessage;
 
-  final FocusNode focusNode;
-
   @override
   State<ChatListWidget> createState() => _ChatListWidgetState();
 }
@@ -93,8 +86,6 @@ class _ChatListWidgetState extends State<ChatListWidget>
 
   AutoScrollController get scrollController => chatController.scrollController;
 
-  bool get showTypingIndicator => widget.showTypingIndicator;
-
   ChatBackgroundConfiguration get chatBackgroundConfig =>
       widget.chatBackgroundConfig;
 
@@ -108,7 +99,6 @@ class _ChatListWidgetState extends State<ChatListWidget>
   void initState() {
     super.initState();
     _initialize();
-    // scrollController.addListener(_scrollListener);
   }
 
   @override
@@ -158,7 +148,6 @@ class _ChatListWidgetState extends State<ChatListWidget>
                 child: ChatGroupedListWidget(
                   showPopUp: showPopUp!.value,
                   // reactionPopupConfig: widget.reactionPopupConfig,
-                  showTypingIndicator: showTypingIndicator,
                   scrollController: scrollController,
                   isEnableSwipeToSeeTime:
                       featureActiveConfig?.enableSwipeToSeeTime ?? true,
@@ -282,8 +271,7 @@ class _ChatListWidgetState extends State<ChatListWidget>
 
   @override
   void dispose() {
-    chatController.messageStreamController.close();
-    // scrollController.dispose();
+    scrollController.dispose();
     chatController._isNextPageLoadingNotifier.dispose();
     showPopUp!.dispose();
     super.dispose();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 
+import '../../flutter_chatbook.dart';
 import '../values/typedefs.dart';
 
 class ChatBackgroundConfiguration {
@@ -45,6 +46,9 @@ class ChatBackgroundConfiguration {
   /// Used for giving widget while data is loading.
   final Widget? loadingWidget;
 
+  /// For custom groupBy, default is on the basis of day
+  final String Function(Message message)? groupBy;
+
   /// Used to give curve of animation which runes while user swipe to see time of
   /// message.
   final Curve messageTimeAnimationCurve;
@@ -59,6 +63,7 @@ class ChatBackgroundConfiguration {
     this.groupedListOrder = GroupedListOrder.ASC,
     this.sortEnable = false,
     this.padding,
+    this.groupBy,
     this.margin,
     this.messageTimeTextStyle,
     this.messageTimeIconColor,

@@ -1,207 +1,21 @@
 import 'dart:math';
-import 'package:flutter_chatbook/flutter_chatbook.dart';
-import 'package:example/create_user_screen.dart';
-import 'package:example/service_locator.dart';
-import 'package:example/users_screen.dart';
-import 'package:giphy_message/models/giphy_message.dart';
-import 'theme.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:giphy_message/giphy_message.dart';
 
-String apiKey = 'WdUCeA3nQDXNvVmFfK9ZBZJ3QGxaSQnZ';
+import '../theme.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  const user = ChatUser(id: '7489016865', firstName: 'Flutter');
-
-  customMessageConstructors['giphy'] = (json) => GiphyMessage.fromJson(json);
-
-  ChatBookController.getInstance(user,
-      chatBookExtension: ChatBookExtension(
-          widgetsExtension:
-              WidgetsExtension(messageTypes: [GiphyMessageSupport(apiKey)]),
-          serviceExtension: ServiceExtension<SqfliteDataBaseService>(
-              dataManager: SqfliteDataBaseService(currentUser: user))));
-  runApp(const Example());
-}
-
-class Example extends StatelessWidget {
-  const Example({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      key: const Key('Main App'),
-      title: 'Example',
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-        DefaultCupertinoLocalizations.delegate,
-      ],
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const ChatScreen(),
-        '/create_user_screen': (context) => const UserFormScreen(),
-        '/user_screen': (context) => const UserListScreen(),
-      },
-    );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    init();
-  }
-
-  init() async {
-    Future.delayed(const Duration(seconds: 2), () async {
-      _chatRooms.value = await _chatroomService?.fetchRooms() ?? [];
-    });
-  }
-
-  Future<void> _onRefresh() async {
-    _chatRooms.value = await _chatroomService?.fetchRooms() ?? [];
-  }
-
-  SqfLiteChatRoomDataBaseService? get _chatroomService => serviceLocator
-      .get<ChatBookController>()
-      .chatBookExtension
-      ?.serviceExtension
-      ?.dataManager
-      ?.roomManager as SqfLiteChatRoomDataBaseService;
-
-  final ValueNotifier<List<ChatDataBaseService>> _chatRooms = ValueNotifier([]);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            const UserAccountsDrawerHeader(
-              accountName: Text('John Doe'),
-              accountEmail: Text('johndoe@example.com'),
-              currentAccountPicture: CircleAvatar(
-                child: Text('JD'),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.supervised_user_circle),
-              title: const Text('Create User'),
-              onTap: () {
-                Navigator.pushNamed(context, '/create_user_screen');
-                // Perform action when user taps on the Settings item
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.group_add_outlined),
-              title: const Text('Create Room'),
-              onTap: () {
-                Navigator.pushNamed(context, '/user_screen');
-                // Perform action when user taps on the Settings item
-              },
-            ),
-          ],
-        ),
-      ),
-      appBar: AppBar(
-        title: const Text('My App'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Perform action when user taps on the user icon
-            },
-            icon: const Icon(Icons.person),
-          ),
-          IconButton(
-            onPressed: () {
-              _chatroomService?.deleteMessages();
-              // Perform action when user taps on the menu icon
-            },
-            icon: const Icon(Icons.menu),
-          ),
-          IconButton(
-            onPressed: () {
-              _chatroomService?.createMessages();
-
-              // Perform action when user taps on the search icon
-            },
-            icon: const Icon(Icons.search),
-          ),
-        ],
-      ),
-      body: ValueListenableBuilder<List<ChatDataBaseService>>(
-        valueListenable: _chatRooms,
-        builder: (context, value, child) {
-          return RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: ListView.builder(
-              itemCount: value.length,
-              itemBuilder: (BuildContext context, int index) {
-                final chatUser = value[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    child: Text(chatUser.room.name ?? chatUser.room.id),
-                  ),
-                  title: Text(chatUser.room.name ?? chatUser.room.id),
-                  subtitle: StreamBuilder<Message>(
-                    stream: chatUser.lastMessageStream.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.type == MessageType.text) {
-                          return Text((snapshot.data as TextMessage).text);
-                        }
-                        return const SizedBox();
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatScreen(
-                            // chatService: chatUser,
-                            ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({
+class NormalChatScreen extends StatefulWidget {
+  const NormalChatScreen({
     Key? key,
-    // required this.chatService,
   }) : super(key: key);
 
-  // final ChatDataBaseService chatService;
-
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<NormalChatScreen> createState() => _NormalChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _NormalChatScreenState extends State<NormalChatScreen> {
   AppTheme theme = LightTheme();
   bool isDarkTheme = false;
 
@@ -215,29 +29,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void init() async {
     _chatController = ChatController(
-      // chatBookController: _chatBookController,
       initialMessageList: [],
-      // chatService: widget.chatService,
       scrollController: AutoScrollController(),
       chatUsers: chatUsers,
     );
-
-    // _chatController.loadMoreData(widget.chatService.messages);
-    // final result = await _userProfileService?.fetchUsers();
-    // if (result != null) {
-    //   chatUsers.addAll(result);
-    // }
   }
-
-  // ChatBookController get _chatBookController =>
-  //     serviceLocator.get<ChatBookController>();
-
-  // SqfliteUserProfileService? get _userProfileService => serviceLocator
-  //     .get<ChatBookController>()
-  //     .chatBookExtension
-  //     ?.serviceExtension
-  //     ?.dataManager
-  //     ?.profileManager as SqfliteUserProfileService;
 
   late final ChatController _chatController;
 
@@ -300,7 +96,6 @@ class _ChatScreenState extends State<ChatScreen> {
           backGroundColor: theme.appBarColor,
           backArrowColor: theme.backArrowColor,
           chatTitle: "ram",
-          //  widget.chatService.room.name ?? "",
           chatTitleTextStyle: TextStyle(
             color: theme.appBarTitleTextStyle,
             fontWeight: FontWeight.bold,
@@ -372,6 +167,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         chatBubbleConfig: ChatBubbleConfiguration(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
           outgoingChatBubbleConfig: ChatBubble(
             linkPreviewConfig: LinkPreviewConfiguration(
               backgroundColor: theme.linkPreviewOutgoingChatColor,

@@ -57,7 +57,7 @@ export 'src/models/receipts_widget_config.dart';
 export 'src/extensions/extensions.dart' show MessageTypes;
 export 'src/extensions/extension_apis/default plugins/sqflite_database_service/exports.dart';
 export 'src/controller/chat_book_controller.dart';
-export 'src/extensions/extension_apis/chat_view_extension.dart';
+export 'src/extensions/extension_apis/chat_book_extension.dart';
 export 'src/extensions/extension_apis/service/service_export.dart';
 export 'src/extensions/extension_apis/widgets extension/widget_extension.dart';
 export 'src/utils/show_preview.dart';

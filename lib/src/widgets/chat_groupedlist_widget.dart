@@ -4,7 +4,6 @@ class ChatGroupedListWidget extends StatefulWidget {
   const ChatGroupedListWidget({
     Key? key,
     required this.showPopUp,
-    required this.showTypingIndicator,
     required this.scrollController,
     required this.chatBackgroundConfig,
     this.replyMessage,
@@ -22,9 +21,6 @@ class ChatGroupedListWidget extends StatefulWidget {
 
   /// Allow user to swipe to see time while reaction pop is not open.
   final bool showPopUp;
-
-  /// Allow user to show typing indicator.
-  final bool showTypingIndicator;
 
   final AutoScrollController scrollController;
 
@@ -74,8 +70,6 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
       widget.chatBackgroundConfig;
 
   bool get showPopUp => chatController?.showPopUp.value ?? false;
-
-  bool get showTypingIndicator => widget.showTypingIndicator;
 
   bool highlightMessage = false;
 
@@ -245,13 +239,14 @@ class _ChatGroupedListWidgetState extends State<ChatGroupedListWidget>
                   shrinkWrap: true,
                   elements: snapshot.data!,
                   reverse: true,
-                  groupBy: (element) => DateTime.fromMillisecondsSinceEpoch(
-                          element.value.createdAt)
-                      .getDateFromDateTime,
-                  itemComparator: (message1, message2) =>
-                      // TODO:  CHECK OUT HERE
-                      message1.value.id.compareTo(message2.value.id),
-                  // physics: const BouncingScrollPhysics(),
+                  groupBy: (element) =>
+                      chatBackgroundConfig.groupBy?.call(element.value) ??
+                      DateTime.fromMillisecondsSinceEpoch(
+                              element.value.createdAt)
+                          .getDateFromDateTime,
+                  itemComparator: (message1, message2) => message1
+                      .value.createdAt
+                      .compareTo(message2.value.createdAt),
                   controller: widget.scrollController,
                   order: chatBackgroundConfig.groupedListOrder,
                   sort: chatBackgroundConfig.sortEnable,

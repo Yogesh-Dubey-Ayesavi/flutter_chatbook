@@ -184,6 +184,7 @@ class _MessageViewState extends State<MessageView> {
                 } else if (widget.message.type.isText) {
                   return TextMessageView(
                     isLastMessage: isLastMessage,
+                    messageConfiguration: messageConfig,
                     inComingChatBubbleConfig: widget.inComingChatBubbleConfig,
                     receiptsBuilderVisibility: receiptsVisibility,
                     outgoingChatBubbleConfig: widget.outgoingChatBubbleConfig,

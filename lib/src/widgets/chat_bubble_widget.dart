@@ -110,7 +110,7 @@ class _ChatBubbleWidgetState extends State<ChatBubbleWidget> {
                   ?.widgetsExtension?.messageTypes.isNotEmpty ??
               false))
       ? chatController!.chatBookController!.chatBookExtension!.widgetsExtension!
-          .getMessageSuport(widget.message)
+          .getMessageSuport(widget.message as CustomMessage)
       : null;
 
   @override

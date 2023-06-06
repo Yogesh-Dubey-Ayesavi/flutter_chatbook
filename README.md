@@ -469,6 +469,19 @@ ChatBook(
 )
 ```
 
+Here's a tabular comparison highlighting the key differences between `ChatBookController` and `ChatController`:
+
+|                       | ChatBookController                          | ChatController                               |
+|-----------------------|---------------------------------------------|----------------------------------------------|
+| Purpose               | Application-specific chat controller         | Room-specific chat controller                |
+| Initialization       | Initialized once during the application lifecycle | Initialized for each chat room individually |
+| Necessity of Initialization | Not necessary to be initialized            | Necessary to be initialized                 |
+| Functionality         | Manages chat functionality of the entire application | Manages chat functionality of a specific chat room |
+| Services              | Adds custom databases, backend integration, and notification handling | Adds new messages to the UI, performs operations specific to the room |
+| Flexibility           | Allows adding new categories of messages and extending functionality | Focused on managing UI and performing room-specific operations |
+| Scope                 | Global scope within the entire application   | Limited to the specific chat room            |
+
+Please note that the table provides a summarized comparison between the two controllers based on the provided information. Additional details specific to your implementation can be included to provide a more comprehensive comparison.
 
 
 ## How to use
@@ -488,25 +501,3 @@ Also, for whole example, check out the **example** app in the [example](https://
   </tr>
 </table>
 <br/>
-
-## License
-
-```text
-MIT License
-Copyright (c) 2022 Simform Solutions
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
