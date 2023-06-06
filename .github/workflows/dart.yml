@@ -31,5 +31,6 @@ jobs:
         run: dart format ./
         
       - name: Build APK
-      - run: flutter build apk
-      - run: flutter build appbundle
+        run: flutter build apk
+      - name: Build AppBundle
+        run: flutter build appbundle
