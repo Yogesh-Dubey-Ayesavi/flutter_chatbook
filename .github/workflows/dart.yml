@@ -29,9 +29,6 @@ jobs:
       
       - name: Format Code
         run: dart format ./
-
-      - name: Build APK
-        run: cd example
         
       - name: Build APK
         run: flutter build apk
