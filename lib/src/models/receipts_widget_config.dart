@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import '../../flutter_chatbook.dart';
 import '../utils/constants/constants.dart';
 
-
 class ReceiptsWidgetConfig {
   /// The builder that builds widget that right next to the senders message bubble.
   /// Right now it's implemented to show animation only at the last message just
@@ -19,7 +18,7 @@ class ReceiptsWidgetConfig {
 
   /// Whether to show receipts in all messages or not defaults to [ShowReceiptsIn.lastMessage]
   final ShowReceiptsIn showReceiptsIn;
-  
+
   const ReceiptsWidgetConfig({
     this.receiptsBuilder,
     this.lastSeenAgoBuilder,

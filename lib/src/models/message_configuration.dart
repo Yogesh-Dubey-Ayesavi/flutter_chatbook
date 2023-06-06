@@ -33,4 +33,3 @@ class MessageConfiguration {
     this.readMoreConfig,
   });
 }
-

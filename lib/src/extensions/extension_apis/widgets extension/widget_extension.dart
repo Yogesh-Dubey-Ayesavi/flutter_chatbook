@@ -29,20 +29,20 @@ class WidgetsExtension {
 abstract class NewMessageSupport<T extends Message> {
   /// Creates a new instance of the `NewMessageSupport` class.
   ///
-/// 1. The [messageClass] parameter is the class type of the message.
-/// 2. The [messageBuilder] parameter is a required function that builds the message widget.
-/// 3. The [customType] parameter is a required string representing the custom type of the message.
-/// 4. The [title] parameter is a required string representing the title of the message type.
-/// 5. The [onMessageCreation] parameter is a required function that handles message creation.
-/// 6. The [replyPreview] parameter is a required function that builds the reply preview widget.
-/// 7. The [repliedMessageBuilder] parameter is a required function that builds the replied message widget.
-/// 8. The [icon] parameter is an optional widget representing the icon for the message type.
-/// 9. The [onSendPress] parameter is an optional function that handles the send button press.
-/// 10. The [priority] parameter is an optional [ToolBarPriority] enum value representing the priority of the message type in the tool bar at the message input textfield.
-/// 11. The [customToolBarWidget] parameter is an optional function that builds a custom toolbar widget.
-/// 12. The [isSwipeable] parameter is an optional boolean indicating whether the message is swipeable.
-/// 13. The [isInsideBubble] parameter is an optional boolean indicating whether the message is inside a bubble.
-/// 14. The [isReactable] parameter is an optional boolean indicating whether the message is reactable.
+  /// 1. The [messageClass] parameter is the class type of the message.
+  /// 2. The [messageBuilder] parameter is a required function that builds the message widget.
+  /// 3. The [customType] parameter is a required string representing the custom type of the message.
+  /// 4. The [title] parameter is a required string representing the title of the message type.
+  /// 5. The [onMessageCreation] parameter is a required function that handles message creation.
+  /// 6. The [replyPreview] parameter is a required function that builds the reply preview widget.
+  /// 7. The [repliedMessageBuilder] parameter is a required function that builds the replied message widget.
+  /// 8. The [icon] parameter is an optional widget representing the icon for the message type.
+  /// 9. The [onSendPress] parameter is an optional function that handles the send button press.
+  /// 10. The [priority] parameter is an optional [ToolBarPriority] enum value representing the priority of the message type in the tool bar at the message input textfield.
+  /// 11. The [customToolBarWidget] parameter is an optional function that builds a custom toolbar widget.
+  /// 12. The [isSwipeable] parameter is an optional boolean indicating whether the message is swipeable.
+  /// 13. The [isInsideBubble] parameter is an optional boolean indicating whether the message is inside a bubble.
+  /// 14. The [isReactable] parameter is an optional boolean indicating whether the message is reactable.
 
   NewMessageSupport(this.messageClass,
       {required this.messageBuilder,

@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatScreen(
+                        builder: (context) => const ChatScreen(
                             // chatService: chatUser,
                             ),
                       ),

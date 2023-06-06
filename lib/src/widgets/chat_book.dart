@@ -294,26 +294,25 @@ class _ChatBookState extends State<ChatBook>
     }
   }
 
-/// Resets the reply message notifier by setting its value to null.
-///
-/// The [_assignReplyMessage] method is called to clear the reply message if it exists.
-/// It checks if the [replyMessageNotifier.value] is not null, and if so, sets it to null.
-void _assignReplyMessage() {
-  if (replyMessageNotifier.value != null) {
-    replyMessageNotifier.value = null;
+  /// Resets the reply message notifier by setting its value to null.
+  ///
+  /// The [_assignReplyMessage] method is called to clear the reply message if it exists.
+  /// It checks if the [replyMessageNotifier.value] is not null, and if so, sets it to null.
+  void _assignReplyMessage() {
+    if (replyMessageNotifier.value != null) {
+      replyMessageNotifier.value = null;
+    }
   }
-}
 
-/// Performs necessary cleanup operations when the widget is disposed.
-///
-/// The [replyMessageNotifier] is disposed to release any resources held by it.
-/// The [ChatBook] singleton instance is unregistered from the service locator.
-/// Finally, the [super.dispose()] method is called to perform additional cleanup.
-@override
-void dispose() {
-  replyMessageNotifier.dispose();
-  serviceLocator.unregister<ChatBook>();
-  super.dispose();
-}
-
+  /// Performs necessary cleanup operations when the widget is disposed.
+  ///
+  /// The [replyMessageNotifier] is disposed to release any resources held by it.
+  /// The [ChatBook] singleton instance is unregistered from the service locator.
+  /// Finally, the [super.dispose()] method is called to perform additional cleanup.
+  @override
+  void dispose() {
+    replyMessageNotifier.dispose();
+    serviceLocator.unregister<ChatBook>();
+    super.dispose();
+  }
 }

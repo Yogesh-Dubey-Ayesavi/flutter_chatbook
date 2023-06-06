@@ -49,7 +49,7 @@ abstract class Message extends Equatable {
 
     switch (type) {
       case MessageType.custom:
-        return CustomMessage.fromJson( json);
+        return CustomMessage.fromJson(json);
       case MessageType.voice:
         return AudioMessage.fromJson(json);
       case MessageType.image:

@@ -6,7 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../../flutter_chatbook.dart';
 
 class SqfliteChatDataBaseService extends ChatDataBaseService {
-  
   SqfliteChatDataBaseService(Room room, {this.limit = 20}) : super(room);
 
   int _offset = 0;

@@ -49,7 +49,6 @@ class ReactionsBottomSheet {
                           borderRadius: BorderRadius.circular(10),
                         ),
                 child: GestureDetector(
-                
                   child: Row(
                     children: [
                       Expanded(

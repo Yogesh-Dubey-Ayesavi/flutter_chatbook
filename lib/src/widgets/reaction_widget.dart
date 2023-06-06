@@ -50,7 +50,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         onTap: () => chatController != null && currentUser != null
             ? ReactionsBottomSheet().show(
                 context: context,
-               
                 reaction: widget.reaction,
                 chatController: chatController!,
                 reactionsBottomSheetConfig:

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import '../../../../flutter_chatbook.dart';
 part 'database_service.g.dart';
+
 /// The `DatabaseManager` class adds the capability to store and retrieve messages in [ChatBook] directly.
 ///
 /// It consists of the following components:
@@ -34,7 +35,8 @@ part 'database_service.g.dart';
 ///   RoomManager get roomManager => const MyRoomManager();
 /// }
 /// ```
-abstract class DatabaseManager<T extends ProfileManager, E extends RoomManager> {
+abstract class DatabaseManager<T extends ProfileManager,
+    E extends RoomManager> {
   /// Creates a new instance of the `DatabaseManager` class.
   ///
   /// The [currentUser] parameter represents the current user for whom the database manager is initialized.

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 
 import '../../flutter_chatbook.dart';
-import '../values/typedefs.dart';
 
 class ChatBackgroundConfiguration {
   /// Provides background color of chat view.

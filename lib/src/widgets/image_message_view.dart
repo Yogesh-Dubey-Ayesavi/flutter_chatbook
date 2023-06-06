@@ -154,7 +154,7 @@ class ImageMessageView extends StatelessWidget {
                               outgoingChatBubbleConfig
                                       ?.receiptsWidgetConfig?.receiptsBuilder
                                       ?.call(message) ??
-                                WhatsAppMessageWidget(message)
+                                  WhatsAppMessageWidget(message)
                             ]
                           ])),
                 ),
