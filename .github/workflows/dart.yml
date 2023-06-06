@@ -14,6 +14,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.7.7'
           channel: 'stable'
 
       - name: Display Flutter version
