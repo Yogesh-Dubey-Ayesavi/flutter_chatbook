@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:giphy_message/giphy_message.dart';
 
-String apiKey = 'WdUCeA3nQDXNvVmFfK9ZBZJ3QGxaSQnZ';
+String apiKey = 'ApiKy';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
