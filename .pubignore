@@ -1,0 +1,6 @@
+.readthedocs.yaml
+
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/emoji_picker_flutter
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/shared_preferences_linux
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/url_launcher_linux
