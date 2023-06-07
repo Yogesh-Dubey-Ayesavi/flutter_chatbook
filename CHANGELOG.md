@@ -1,3 +1,4 @@
+
 ## [0.0.1-alpha]
 
 * Initial Release
@@ -12,3 +13,8 @@ Introducing Flutter ChatBook version 1.0.0-alpha:
 - ChatBookController for enhanced control and manipulation
 - Improved performance with fixed widget rebuildings
 - Updated and improved data models
+
+
+## [0.0.2-alpha]
+
+* Updated Readme, mentioned credits

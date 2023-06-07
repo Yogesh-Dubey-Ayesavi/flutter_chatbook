@@ -1,8 +1,8 @@
 name: flutter_chatbook
 description: A Flutter package that allows you to integrate Chat View with highly customization options.
-version: 0.0.1
-issue_tracker: https://github.com/SimformSolutionsPvtLtd/flutter_chatview/issues
-repository: https://github.com/SimformSolutionsPvtLtd/flutter_chatview
+version: 0.0.2-alpha
+issue_tracker: https://github.com/Yogesh-Dubey-Ayesavi/flutter_chatbook/issues
+repository: https://github.com/Yogesh-Dubey-Ayesavi/flutter_chatbook
 
 platforms:
   android:

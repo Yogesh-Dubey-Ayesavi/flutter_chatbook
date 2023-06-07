@@ -1,7 +1,7 @@
 ![Banner](https://raw.githubusercontent.com/SimformSolutionsPvtLtd/flutter_chat_ui/main/preview/banner.png)
 
 # ChatBook
- [![flutter_chatbook](https://img.shields.io/pub/v/chatview?label=chatview)](https://pub.dev/packages/chatview)
+ <!-- [![flutter_chatbook](https://img.shields.io/pub/v/chatview?label=chatview)](https://pub.dev/packages/chatview) -->
 
 A Flutter package that allows you to integrate Chat View with highly customization options such as one on one
 chat, group chat, message reactions, reply messages, link preview and configurations for overall view.
@@ -481,23 +481,6 @@ Here's a tabular comparison highlighting the key differences between `ChatBookCo
 | Flexibility           | Allows adding new categories of messages and extending functionality | Focused on managing UI and performing room-specific operations |
 | Scope                 | Global scope within the entire application   | Limited to the specific chat room            |
 
-Please note that the table provides a summarized comparison between the two controllers based on the provided information. Additional details specific to your implementation can be included to provide a more comprehensive comparison.
 
 
-## How to use
-
-Check out [blog](https://medium.com/simform-engineering/flutter_chatbook-a-cutting-edge-chat-ui-solution-7367b1f9d772) for better understanding and basic implementation. 
-
-Also, for whole example, check out the **example** app in the [example](https://github.com/SimformSolutionsPvtLtd/flutter_chatview/tree/main/example) directory or the 'Example' tab on pub.dartlang.org for a more complete example.
-
-
-## Main Contributors
-
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/vatsaltanna"><img src="https://avatars.githubusercontent.com/u/25323183?s=100" width="100px;" alt=""/><br /><sub><b>Vatsal Tanna</b></sub></a></td>
-    <td align="center"><a href="https://github.com/DhvanitVaghani"><img src="https://avatars.githubusercontent.com/u/64645989?v=4" width="100px;" alt=""/><br /><sub><b>Dhvanit Vaghani</b></sub></a></td>
-    <td align="center"><a href="https://github.com/Ujas-Majithiya"><img src="https://avatars.githubusercontent.com/u/56400956?v=4" width="100px;" alt=""/><br /><sub><b>Ujas Majithiya</b></sub></a></td>
-  </tr>
-</table>
-<br/>
+This package has been inspired from [chatview](https://pub.dev/packages/chatviewhttps://pub.dev/packages/chatview), Thanks to [Simform Solutions](https://pub.dev/publishers/simform.com/packages) for this.
