@@ -7,6 +7,12 @@ build/
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
 
+.readthedocs.yaml
+docs/readme.rst
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/emoji_picker_flutter
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/shared_preferences_linux
+packages/giphy_message/linux/flutter/ephemeral/.plugin_symlinks/url_launcher_linux
 
 # Directory created by dartdoc
 # If you don't generate documentation locally you can remove this line.
