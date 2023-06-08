@@ -50,6 +50,7 @@ import 'package:get_it/get_it.dart';
 
 export 'src/models/models.dart';
 export 'src/values/enumaration.dart';
+export 'src/utils/format.dart';
 export 'src/values/typedefs.dart';
 export 'package:audio_waveforms/audio_waveforms.dart'
     show WaveStyle, PlayerWaveStyle;

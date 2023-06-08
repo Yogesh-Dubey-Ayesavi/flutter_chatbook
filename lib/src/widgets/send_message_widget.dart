@@ -361,7 +361,7 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
   double get _bottomPadding => (!kIsWeb && Platform.isIOS)
       ? (chatController?.focusNode.hasFocus ?? false
           ? bottomPadding1
-          : window.viewPadding.bottom > 0
+          : View.of(context).viewPadding.bottom > 0
               ? bottomPadding2
               : bottomPadding3)
       : bottomPadding3;

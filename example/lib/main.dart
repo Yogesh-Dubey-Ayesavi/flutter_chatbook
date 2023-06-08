@@ -3,12 +3,10 @@ import 'package:flutter_chatbook/flutter_chatbook.dart';
 import 'package:example/create_user_screen.dart';
 import 'package:example/service_locator.dart';
 import 'package:example/users_screen.dart';
-import 'package:giphy_message/models/giphy_message.dart';
 import 'theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:giphy_message/giphy_message.dart';
 
 String apiKey = 'ApiKy';
 
@@ -17,12 +15,9 @@ void main() {
 
   const user = ChatUser(id: '7489016865', firstName: 'Flutter');
 
-  customMessageConstructors['giphy'] = (json) => GiphyMessage.fromJson(json);
-
   ChatBookController.getInstance(user,
       chatBookExtension: ChatBookExtension(
-          widgetsExtension:
-              WidgetsExtension(messageTypes: [GiphyMessageSupport(apiKey)]),
+          widgetsExtension: WidgetsExtension(messageTypes: []),
           serviceExtension: ServiceExtension<SqfliteDataBaseService>(
               dataManager: SqfliteDataBaseService(currentUser: user))));
   runApp(const Example());
