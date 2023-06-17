@@ -1,4 +1,3 @@
-
 import 'package:flutter_chatbook/src/extensions/extension_apis/default%20plugins/sqflite_database_service/sql_queries.dart';
 import 'package:flutter_chatbook/src/utils/constants/constants.dart';
 import 'package:sqflite/sqflite.dart';

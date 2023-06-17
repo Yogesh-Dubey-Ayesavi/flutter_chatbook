@@ -41,7 +41,6 @@ class CustomMessage extends Message {
 
   /// Creates a custom message from a map (decoded JSON).
   factory CustomMessage.fromJson(Map<String, dynamic> json) {
-
     final constructor = customMessageConstructors[json['customType']];
     if (constructor != null) {
       return constructor(json);
@@ -49,7 +48,6 @@ class CustomMessage extends Message {
       throw Exception('Unknown messageType ${[json["customType"]]}');
     }
   }
-
 
   /// Equatable props.
   @override

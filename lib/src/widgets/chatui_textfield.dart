@@ -254,7 +254,9 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                                 _showEmojiBottomSheet.call(context),
                             icon: sendMessageConfig?.emojiPickerIcon ??
                                 Icon(Icons.emoji_emotions_outlined,
-                                    color: sendMessageConfig?.emojiPickerColor),
+                                    color:
+                                        sendMessageConfig?.emojiPickerColor ??
+                                            Colors.black),
                           ),
                           contentPadding: textFieldConfig?.contentPadding ??
                               const EdgeInsets.symmetric(horizontal: 6),

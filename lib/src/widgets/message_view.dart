@@ -122,8 +122,38 @@ class _MessageViewState extends State<MessageView> {
           );
   }
 
+  EdgeInsetsGeometry? get _padding => isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.padding
+      : widget.inComingChatBubbleConfig?.padding;
+
+  EdgeInsetsGeometry? get _margin => isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.margin
+      : widget.inComingChatBubbleConfig?.margin;
+
+  LinkPreviewConfiguration? get _linkPreviewConfig => isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.linkPreviewConfig
+      : widget.inComingChatBubbleConfig?.linkPreviewConfig;
+
+  TextStyle? get _textStyle => isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.textStyle
+      : widget.inComingChatBubbleConfig?.textStyle;
+
+  BorderRadiusGeometry _borderRadius(String message) => isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.borderRadius ??
+          (message.length < 37
+              ? BorderRadius.circular(replyBorderRadius1)
+              : BorderRadius.circular(replyBorderRadius2))
+      : widget.inComingChatBubbleConfig?.borderRadius ??
+          (message.length < 29
+              ? BorderRadius.circular(replyBorderRadius1)
+              : BorderRadius.circular(replyBorderRadius2));
+
+  Color get _color => isMessageBySender
+      ? widget.outgoingChatBubbleConfig?.color ?? Colors.purple
+      : widget.inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
+
   Widget get _messageView {
-    final emojiMessageConfiguration = messageConfig?.emojiMessageConfig;
+    final emojiMessageConfiguration = widget.messageConfig?.emojiMessageConfig;
     return Padding(
       padding: EdgeInsets.only(
         bottom: widget.message.reaction?.reactions.isNotEmpty ?? false ? 6 : 0,
@@ -137,28 +167,58 @@ class _MessageViewState extends State<MessageView> {
                   return Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Padding(
-                        padding: emojiMessageConfiguration?.padding ??
-                            EdgeInsets.fromLTRB(
-                              leftPadding2,
-                              4,
-                              leftPadding2,
-                              widget.message.reaction?.reactions.isNotEmpty ??
-                                      false
-                                  ? 14
-                                  : 0,
-                            ),
-                        child: Transform.scale(
-                          scale: widget.shouldHighlight
-                              ? widget.highlightScale
-                              : 1.0,
-                          child: Text(
-                            msg.text,
-                            style: emojiMessageConfiguration?.textStyle ??
-                                const TextStyle(fontSize: 30),
+                      Container(
+                          constraints: BoxConstraints(
+                              maxWidth: widget.chatBubbleMaxWidth ??
+                                  MediaQuery.of(context).size.width * 0.75),
+                          padding: _padding ??
+                              const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                          margin: _margin ??
+                              EdgeInsets.fromLTRB(
+                                  5,
+                                  0,
+                                  6,
+                                  widget.message.reaction?.reactions
+                                              .isNotEmpty ??
+                                          false
+                                      ? 15
+                                      : 2),
+                          decoration: BoxDecoration(
+                            color: widget.shouldHighlight
+                                ? widget.highlightColor
+                                : _color,
+                            borderRadius: BorderRadius.circular(32),
                           ),
-                        ),
-                      ),
+                          child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: emojiMessageConfiguration?.padding ??
+                                      EdgeInsets.fromLTRB(
+                                        leftPadding2,
+                                        4,
+                                        leftPadding2,
+                                        widget.message.reaction?.reactions
+                                                    .isNotEmpty ??
+                                                false
+                                            ? 14
+                                            : 0,
+                                      ),
+                                  child: Transform.scale(
+                                    scale: widget.shouldHighlight
+                                        ? widget.highlightScale
+                                        : 1.0,
+                                    child: Text(msg.text,
+                                        style: emojiMessageConfiguration
+                                            ?.textStyle),
+                                  ),
+                                ),
+                                WhatsAppMessageWidget(msg)
+                              ])),
                       if (widget.message.reaction?.reactions.isNotEmpty ??
                           false)
                         ReactionWidget(
@@ -296,18 +356,6 @@ class _MessageViewState extends State<MessageView> {
       ),
     );
   }
-
-  Color get _color => widget.isMessageBySender
-      ? widget.outgoingChatBubbleConfig?.color ?? Colors.purple
-      : widget.inComingChatBubbleConfig?.color ?? Colors.grey.shade500;
-
-  EdgeInsetsGeometry? get _padding => widget.isMessageBySender
-      ? widget.outgoingChatBubbleConfig?.padding
-      : widget.inComingChatBubbleConfig?.padding;
-
-  EdgeInsetsGeometry? get _margin => widget.isMessageBySender
-      ? widget.outgoingChatBubbleConfig?.margin
-      : widget.inComingChatBubbleConfig?.margin;
 
   @override
   void dispose() {

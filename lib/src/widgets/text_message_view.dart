@@ -127,46 +127,49 @@ class TextMessageView extends StatelessWidget {
               borderRadius: _borderRadius(textMessage),
             ),
             //TODO: add functinality to opt for readmore
-            child: Column(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                textMessage.isUrl
-                    ? LinkPreview(
-                        linkPreviewConfig: _linkPreviewConfig,
-                        url: textMessage,
-                      )
-                    : message.text.length <=
-                            (messageConfiguration?.readMoreConfig
-                                    ?.numOfWordsAfterEnableReadMore ??
-                                400)
-                        ? textWidget(textTheme, message.text)
-                        : ValueListenableBuilder<bool>(
-                            valueListenable: _isExpanded,
-                            builder:
-                                (BuildContext context, value, Widget? child) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  textWidget(
-                                      textTheme,
-                                      !_isExpanded.value
-                                          ? '${message.text.substring(0, messageConfiguration?.readMoreConfig?.numOfWordsAfterEnableReadMore ?? 400)}...'
-                                          : message.text),
-                                  messageConfiguration
-                                          ?.readMoreConfig?.readMoreWidget ??
-                                      GestureDetector(
-                                          onTap: () => _isExpanded.value =
-                                              !_isExpanded.value,
-                                          child: Padding(
-                                              padding: const EdgeInsets.all(5),
-                                              child: !_isExpanded.value
-                                                  ? const Text("Read More")
-                                                  : const Text("Read Less")))
-                                ],
-                              );
-                            },
-                          ),
+                Flexible(
+                  child: textMessage.isUrl
+                      ? LinkPreview(
+                          linkPreviewConfig: _linkPreviewConfig,
+                          url: textMessage,
+                        )
+                      : message.text.length <=
+                              (messageConfiguration?.readMoreConfig
+                                      ?.numOfWordsAfterEnableReadMore ??
+                                  400)
+                          ? textWidget(textTheme, message.text)
+                          : ValueListenableBuilder<bool>(
+                              valueListenable: _isExpanded,
+                              builder:
+                                  (BuildContext context, value, Widget? child) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    textWidget(
+                                        textTheme,
+                                        !_isExpanded.value
+                                            ? '${message.text.substring(0, messageConfiguration?.readMoreConfig?.numOfWordsAfterEnableReadMore ?? 400)}...'
+                                            : message.text),
+                                    messageConfiguration
+                                            ?.readMoreConfig?.readMoreWidget ??
+                                        GestureDetector(
+                                            onTap: () => _isExpanded.value =
+                                                !_isExpanded.value,
+                                            child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: !_isExpanded.value
+                                                    ? const Text("Read More")
+                                                    : const Text("Read Less")))
+                                  ],
+                                );
+                              },
+                            ),
+                ),
                 if (receiptsBuilderVisibility &&
                     isMessageBySender &&
                     outgoingChatBubbleConfig

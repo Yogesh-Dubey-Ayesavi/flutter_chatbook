@@ -10,7 +10,8 @@ class WhatsAppMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return receiptWidget;
+    return Padding(
+        padding: const EdgeInsets.only(left: 5, top: 2), child: receiptWidget);
   }
 
   Widget get receiptWidget => Row(
@@ -28,9 +29,15 @@ class WhatsAppMessageWidget extends StatelessWidget {
   Widget getReceipt() {
     switch (message.status) {
       case DeliveryStatus.delivered:
-        return const Icon(Icons.done_all, color: Color(0xffFCD8DC), size: 15);
+        return const Row(children: [
+          Icon(Icons.check_circle_outlined, color: Color(0xffFCD8DC), size: 10),
+          Icon(Icons.check_circle_outlined, color: Color(0xffFCD8DC), size: 10),
+        ]);
       case DeliveryStatus.read:
-        return const Icon(Icons.done_all, color: Colors.blue, size: 15);
+        return Row(children: [
+          Icon(Icons.check_circle, color: Color(0xffFCD8DC), size: 11),
+          Icon(Icons.check_circle, color: Color(0xffFCD8DC), size: 11),
+        ]);
       case DeliveryStatus.undelivered:
         return const Icon(Icons.check, color: Color(0xffFCD8DC), size: 15);
       case DeliveryStatus.pending:

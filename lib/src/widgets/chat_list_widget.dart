@@ -95,10 +95,23 @@ class _ChatListWidgetState extends State<ChatListWidget>
 
   bool isCupertino = false;
 
+  late ValueNotifier<bool> showScrollToBottomButtonNotifier;
+
   @override
   void initState() {
     super.initState();
+    showScrollToBottomButtonNotifier = ValueNotifier(false);
+    chatController.scrollController.addListener(_scrollListener);
     _initialize();
+  }
+
+  void _scrollListener() {
+    if (chatController.scrollController.offset >=
+        chatController.scrollController.position.minScrollExtent + 100) {
+      showScrollToBottomButtonNotifier.value = true;
+    } else {
+      showScrollToBottomButtonNotifier.value = false;
+    }
   }
 
   @override
@@ -201,7 +214,32 @@ class _ChatListWidgetState extends State<ChatListWidget>
                         showPopUp: showPopupValue,
                       );
                     })
-              ]
+              ],
+              Positioned(
+                bottom: 16.0,
+                right: 16.0,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: showScrollToBottomButtonNotifier,
+                  builder: (context, value, child) {
+                    return AnimatedOpacity(
+                      opacity: value ? 1.0 : 0.0,
+                      duration: Duration(milliseconds: 300),
+                      child: FloatingActionButton(
+                        backgroundColor: const Color(0xffff8aad),
+                        onPressed: () {
+                          chatController.scrollController.animateTo(
+                            chatController
+                                .scrollController.position.minScrollExtent,
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: Icon(Icons.arrow_downward),
+                      ),
+                    );
+                  },
+                ),
+              )
             ],
           ),
         ),
